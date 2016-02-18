@@ -1,10 +1,4 @@
-- name: Mik Black
-  affiliation: University of Otago, Department of Biochemistry
-  github: mikblack
-  interests:
-    - Software Carpentry
-    - Statistics
-    
+
 - name: James Boocock
   affiliation: University of Otago, Department of Biochemistry
   github: smilefreak
@@ -17,9 +11,9 @@
   affiliation: University of Otago, Department of Biochemistry
   github: TomKellyGenetics
   interests:
-    - Applied Mathematics
     - Cancer Genomics
     - Evolution
+    - Long Walks on the Beach
 
 - name: Murray Cadzow
   affiliation: University of Otago, Department of Biochemistry
