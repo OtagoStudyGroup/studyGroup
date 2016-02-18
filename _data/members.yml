@@ -50,6 +50,16 @@
     - exploring
     - construction
 
+- name: Tahzeeb Fatima
+  affiliation: Department of Biochemistry, University of Otago
+  github: Tahzeeb
+  interests:
+    - Biochemistry
+    - Genomics
+    - Bioinformatics
+    - Human Physiology
+    - Endocrinology
+
 - name: Humaira Rasheed
   affiliation: University of Otago
   github: Humairarasheed
@@ -86,14 +96,6 @@
 - name: Amara Shaukat
   affiliation: Department of Biochemistry, University of Otago
   github: Amara-Shaukat
-  interests:
-    - Health and Disease
-    - Genomics
-    - Bioinformatics
-
-- name: Tahzeeb Fatima
-  affiliation: Department of Biochemistry, University of Otago
-  github: Tahzeeb-Fatima
   interests:
     - Health and Disease
     - Genomics
