@@ -1,4 +1,10 @@
-
+-- name: Mik Black
+ -  affiliation: University of Otago, Department of Biochemistry
+ -  github: mikblack
+ -  interests:
+ -    - Software Carpentry
+ -    - Statistics
+ 
 - name: James Boocock
   affiliation: University of Otago, Department of Biochemistry
   github: smilefreak
