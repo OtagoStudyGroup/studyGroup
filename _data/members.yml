@@ -2,8 +2,8 @@
  -  affiliation: University of Otago, Department of Biochemistry
  -  github: mikblack
  -  interests:
- -    - Software Carpentry
- -    - Statistics
+    - Software Carpentry
+    - Statistics
  
 - name: James Boocock
   affiliation: University of Otago, Department of Biochemistry
@@ -67,15 +67,6 @@
     - Human Physiology
     - Endocrinology
 
-- name: Humaira Rasheed
-  affiliation: University of Otago
-  github: Humairarasheed
-  interests:
-    - Lipids/Lipoproteins
-    - Mechanistic Biology
-    - Public Health
-    - Stem Cells Biology
-
 - name: Van
   affiliation: University of Otago, Department of Biochemistry
   github: caucloud
@@ -91,14 +82,6 @@
     - Cancer (Colorectal primarily)
     - Bioinformatics
     - Indie rock music
-
-- name: Joseph Saunderson
-  affiliation: University of Otago, Department of Computer Science
-  github: xeonz
-  interests:
-    - Programming
-    - NFC/RFID Technologies
-    - Long walks on the beach
 
 - name: Amara Shaukat
   affiliation: Department of Biochemistry, University of Otago
