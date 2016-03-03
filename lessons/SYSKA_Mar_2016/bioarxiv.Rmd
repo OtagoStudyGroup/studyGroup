@@ -1,0 +1,107 @@
+---
+title: "Pre-prints in the BioSciences"
+subtitle: "or why the current system sucks"
+author: "James Boocock<BR>Department of Biochemistry"
+date: "3 March 2016"
+output: ioslides_presentation
+---
+  
+## Current publishing system.
+
+Scientific manuscripts are peer-reviewed to assess quality
+
+***Disadvantages:***
+
+    - Speed
+    - Access - the dreaded "paywall"
+    - Nonsense still gets through all the time.
+    - University buy back their own articles.
+  
+***Benefits:***
+  
+    - Filters the scientific literature
+    - Hiring criteria
+    - Assesses the impact of the work.
+
+
+## Pre-prints
+
+Facilitates circulation of scientific knowledge early, and for free before the peer-review
+process begins.
+
+Since 1991, Math, Physics, and other quantative discplines they have had and used  a pre-print server known as the arXiv.
+
+<center><img src="figs/Arxiv.png" height="200"></center>
+
+http://arxiv.org/
+
+
+## Why Pre-prints?
+
+Simply when a draft of a manuscript is complete it is uploaded to an open access webserver.
+
+***Percieved Disadvantages:***
+
+    - Scooping.
+    - Might prevent publication.
+    - Filtering bad papers.
+  
+***Benefits:***
+  
+    - Access to the newest ideas months in advance.
+    - Open Access.
+    - Priority.
+    
+---
+
+<center><img src="figs/biorxiv_logo.png" height="200"></center>
+
+
+Only a few years old, but showing promise.
+
+
+### My apple paper is on there:
+http://biorxiv.org/content/early/2015/07/15/021857
+
+  - Paper was published in BMC genomics in august, was on BioarXiv in July.
+
+  - 248 PDF downloads.
+    
+## But why are biologists talking about it now?
+
+Recent publication argues that pre-prints are the way forward for biology.
+
+<center><img src="figs/accelarate.png" height="200"></center>
+
+  - Pre-print: http://biorxiv.org/content/early/2015/07/11/022368.full.pdf+html
+  - Publication: http://www.pnas.org/content/112/44/13439.abstract
+
+## It even lead to a conference.
+
+<img src="figs/ASAP-small.png" height="50">
+
+Here is a storify with tweets from Michael Eisen of UCBerkeley, and Jessica Polka a PostDoc at Harvard.
+https://storify.com/mbeisen/mbeisen-pollyp1-plans-for-asapbio
+
+Basically, they called for the most famous scientists and the funders with the least to lose to embrace this new mode of 
+publishing. Recognizing that vunerable early career research could be damaged if they adopt this.
+
+## A transitional hybrid model, then PPPR
+
+Post-publication peer-review (PPPR) is an evolution from the pre-print to journal review and publication pipeline. 
+
+###  Publication timeline
+  - Do science!
+  - Write science!
+  - Publish science! No review necessary.
+  - Reviews happen post-publication.
+  
+Journals, such as http://f1000research.com/ are already doing this.
+
+See http://f1000research.com/articles/4-121/v1 for an prominent example of how it can work.
+
+## Use pre-prints!!!!
+
+
+
+
