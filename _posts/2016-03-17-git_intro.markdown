@@ -1,0 +1,11 @@
+---
+title: Git/Github Intro
+text: Interactive session intro session for git/github use
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/17
+date: 2016-03-17
+startTime: '15:30'
+endTime: '16:30'
+
+---
+
