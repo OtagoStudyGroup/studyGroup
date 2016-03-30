@@ -1,0 +1,11 @@
+---
+title: How Do I...
+text: Interactive session to get help on all those how do I... questions you might have (bring a laptop if you want)
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/20
+date: 2016-03-31
+startTime: '15:30'
+endTime: '16:30'
+
+---
+
