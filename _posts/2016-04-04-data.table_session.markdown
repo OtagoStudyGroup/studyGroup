@@ -1,0 +1,9 @@
+---
+title: SYSKA (Tom K) Handling Large data in R
+text: An introduction to the data.table package and other approaches to large files
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/OtagoStudyGroup/studyGroup/issues/21
+date: 2016-04-14
+startTime: '15:30'
+endTime: '17:00'
+---
