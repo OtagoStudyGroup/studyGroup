@@ -4,6 +4,6 @@ text: An introduction to the data.table package and other approaches to large fi
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/OtagoStudyGroup/studyGroup/issues/21
 date: 2016-04-14
-startTime: '15:30'
-endTime: '17:00'
+startTime: '15:00'
+endTime: '16:30'
 ---
