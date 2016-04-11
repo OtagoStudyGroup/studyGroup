@@ -1,0 +1,380 @@
+---
+output:
+  html_document:
+    keep_md: true
+#output: 
+#  pdf_document:
+#    keep_tex: true
+---
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path="Figs/", warning=FALSE, message=FALSE)
+```
+
+
+# Stuff You Should Know About: Handling Large Data Files with R
+## The Data Table package and various other ways to handle data in R
+
+ - **Authors**: Tom Kelly
+- **Research field**: Bioinformatics / Computational Biology / Cancer Genomics
+ - **Lesson Topic**: An introduction to various packages for file I/O and data manipulation in R, with comparision to base R (and compatibility with data frames), in terms of user-friendliness, performance in CPU-time, and memory usage. 
+
+## Installation
+
+Install Data Table from CRAN (current version 1.9.6)
+```{r}
+install.packages("data.table", repos = "https::/cran.rstudio.com")
+library("data.table")
+```
+
+Install development version from GitHub (current version 1.9.7)
+```{r}
+install.packages("data.table", repos = "https://Rdatatable.github.io/data.table", type = "source") #v1.9.7
+library("data.table")
+```
+
+## Getting Started: Data Frames
+
+data table has it's own read function - to rapidly read data into R
+Backwards compatible: It can be used for data.frames
+```{r}
+gapminderFiveYearData <- fread("gapminder-FiveYearData.csv", data.table=F)
+class(gapminderFiveYearData)
+dim(gapminderFiveYearData)
+head(gapminderFiveYearData)
+tail(gapminderFiveYearData)
+str(gapminderFiveYearData)
+```
+
+Backwards compatible: these are standard dataframes compatible with ggplots
+```{r}
+library("ggplot2")
+ggplot(data = gapminderFiveYearData, aes(x = lifeExp, y = gdpPercap, color=continent)) +
+  geom_point()
+```
+
+##Introducing Data Tables
+
+data table defaults to reading it's own data.table format
+```{r}
+gapminderFiveYearData <- fread("gapminder-FiveYearData.csv")
+class(gapminderFiveYearData)
+dim(gapminderFiveYearData)
+head(gapminderFiveYearData)
+tail(gapminderFiveYearData)
+str(gapminderFiveYearData)
+```
+Data tables also auto-trim when printing to console
+```{r}
+gapminderFiveYearData
+```
+
+data tables are backwards compatible with a lot of operations which use data.frames
+Such as plots...
+```{r}
+dev.off()
+ggplot(data = gapminderFiveYearData, aes(x = lifeExp, y = gdpPercap, color=continent)) +
+  geom_point()
+```
+... and linear models...
+```{r}
+linear_model <- lm(gdpPercap ~ pop + year, gapminderFiveYearData)
+summary(linear_model)
+linear_model <- lm(lifeExp ~ gdpPercap + pop + year, gapminderFiveYearData)
+summary(linear_model)
+linear_model <- glm(lifeExp ~ gdpPercap + continent + pop + year, family  ="gaussian", gapminderFiveYearData)
+summary(linear_model)
+```
+... and data manipulation packages (plyr, dplyr, reshape, tidyr, etc...)
+```{r}
+library("plyr")
+calcGDP <- function(dat, year=NULL, country=NULL) {
+  if(!is.null(year)) {
+    dat <- dat[dat$year %in% year, ]
+  }
+  if (!is.null(country)) {
+    dat <- dat[dat$country %in% country,]
+  }
+  gdp <- dat$pop * dat$gdpPercap
+  
+  new <- cbind(dat, gdp=gdp)
+  return(new)
+}
+plyr::ddply(
+  .data = calcGDP(gapminderFiveYearData),
+  .variables = "continent",
+  .fun = function(x) mean(x$gdp)
+)
+```
+Yeah you get the idea.
+
+Data tables have built-in "methods" for a range of functions, these are often faster than standard dataframes or matrices, if these aren't found it uses dataframe functions. A "Data Table" is compatible with any function from any package designed for a "Data Frame".
+
+## File I/O (Input/Output)
+fread is "fast read", and it's **fast**, even for large data files. Let's try it out on some larger datafiles:
+```{r}
+gapminderlarge <- fread("gapminder-large.csv", header=T)
+```
+fread is smart, it auto detects column classes, separators, headers, nrows (for a regularly separated file). We can use the same comand for a whole bunch of file formats. All the usual reading options can be specified manually...
+```{r}
+gapminderFiveYearData <- fread("gapminder-FiveYearData.tsv") #tab delimited
+gapminderFiveYearData <- fread("gapminder-FiveYearData.txt") #space delimited
+gapminderFiveYearDataCrop <- fread("gapminder-FiveYearData.tsv", header=T, col.names=c("place", "time", "people", "big place", "life", "money"), nrows=1000, stringsAsFactors=F)
+gapminderFiveYearDataCrop
+```
+...but it does a lot of the tedious work for you (pretty well too).
+
+It's also got cool progress bars for large files :) These kick in automatically if the file takes longer than about a second. This is really handy to know your code is working, and how long it will take.
+```{r}
+gapminderlarger <- fread("gapminder-larger.csv")
+```
+It's so fast it tells you. Let's compare that with base R:
+```{r}
+system.time(gapminderlarger.dataframe <- read.csv("gapminder-larger.csv", header=T))
+```
+The same operation took much longer with base R, with larger files (or repeating this many times) that ~6x difference could mean a lot for your workflow. 
+
+FYI - there's also a "fast write" compatible with several file formats
+```{r}
+fwrite(gapminderlarger, file="test.csv") #defaults to csv
+fwrite(gapminderlarger, file="test.tsv", sep="\t")
+```
+They're also fast to write data, compared to base R:
+```{r}
+system.time(fwrite(gapminderlarger, file="test.csv"))
+system.time(write.csv(gapminderlarger, file="test.csv"))
+```
+
+## Another solution: bigmemory
+```{r}
+library("bigmemory")
+```
+"bigmemory" uses the "big.matrix" format to access large data files in a C++ framework - rather than stored in RAM/memory as usual in R. This is handy for handling **very large** files, when loading the full dataset in working environment (RAM memory) slows your computer to a halt. Might be handy on servers / HPC too but usually they have enough memory if you're willing to wait for it in a queue.
+
+Let's try out bigmemory, first we convert an R data matrix into a "big.matrix":
+```{r}
+gapminderFiveYearData.big <- as.big.matrix(gapminderFiveYearData)
+gapminderFiveYearData.big
+class(gapminderFiveYearData.big)
+dim(gapminderFiveYearData.big)
+head(gapminderFiveYearData.big)
+tail(gapminderFiveYearData.big)
+str(gapminderFiveYearData.big)
+```
+bigmemory, also has read/write functions direct to big.matrix format:
+```{r}
+write.big.matrix(gapminderFiveYearData.big, "test.csv")
+gapminderFiveYearData.big <- read.big.matrix("test.csv")
+```
+These are designed to be efficient for memory - how fast are they?
+```{r}
+system.time(gapminderlarger.big <- read.big.matrix("gapminder-larger.csv"))
+system.time(write.big.matrix(gapminderFiveYearData.big, "test.csv"))
+```
+
+## New and Shiny: FEATHER
+### A Fast On-Disk Format for Data Frames for R and Python, powered by Apache Arrow
+
+FEATHER (is it's own fast file format) - from Hadley Wickham ggplot/dplyr/etc... and Wes Mckinney (pandas in Python)
+Note: it's in development (unstable) - future versions may not read past versions - intended for use to transfer files quickly (e.g., between R and Python)
+
+At the moment you can only try it out from their github repo (in R or python), it will no doubt end up on CRAN very soon:
+```{r}
+library("devtools")
+devtools::install_github("wesm/feather/R")
+library(feather)
+```
+
+FEATHER has it's own file I/O commands (and format):
+```{r}
+path <- "gapminder-FiveYearData.feather"
+write_feather(gapminderFiveYearData, path) #write data frame to file
+gapminderFiveYearData <- read_feather(path) #read to data frame
+gapminderFiveYearData
+```
+Did I mention it's crazy fast?
+```{r}
+path <- "gapminderlarger.feather"
+system.time(write_feather(gapminderlarger, path))
+system.time(gapminderlarger.feather <- read_feather(path))
+```
+
+Or install and run in Python:
+```
+import feather
+path = 'my_data.feather'
+feather.write_dataframe(df, path)
+df = feather.read_dataframe(path)
+```
+
+Note that FEATHER is designed for data _already_ loaded into python or R.
+
+## FILE I/O Summary
+
+### READ 
+**base R** | **data table** | **bigmemory** | **feather**
+--- | --- | --- | ---
+`read.csv`   | `fread`         | `read.big.matrix` | `read_feather`
+52.203s | 8.154s | 28.647s | 2.414s
+
+### Convert dataframe to format 
+**base R** | **data table** | **bigmemory** | **feather**
+--- | --- | --- | ---
+`data.frame` | `as.data.table` | `as.big.matrix`   | built-in
+NA | 0.002s | 66.07s | NA
+
+### Write 
+**base R** | **data table** | **bigmemory** | **feather**
+--- | --- | --- | ---
+`write.csv`  | `fwrite`       | `write.big.matrix` | `write_feather`
+71.382s | 35.453s | 0.068ss | 5.008s
+
+##Manipulating Data Tables
+```{r}
+gapminderFiveYearData <- fread("gapminder-FiveYearData.csv", data.table=T, header = T)
+class(gapminderFiveYearData)
+```
+We can simply treat it as a data frame in many cases:
+```{r}
+gapminderFiveYearData[1,]
+colnames(gapminderFiveYearData)
+head(gapminderFiveYearData$country)
+tail(gapminderFiveYearData$country)
+```
+Data Table has a "Natural" Syntax
+
+`DT[where, select|update|do, by]`
+
+...although suspiciously similar to SQL?
+
+it allows chaining queries: `DT[][]`
+
+Formally: we subset a datatable, Dt, with `DT[i, j, by]`
+
+###I: row selection
+```{r}
+gapminderFiveYearData[c(1:5, 100:105),] #by number
+gapminderFiveYearData[gapminderFiveYearData$country=="New Zealand",] #by condition
+gapminderFiveYearData[gapminderFiveYearData$country %in% c("New Zealand", "Australia", "Japan"),] #by condition
+gapminderFiveYearData[year=="1952"]
+setkey(gapminderFiveYearData, country)
+gapminderFiveYearData[c("New Zealand","Australia")] #by key (will be detailed later)
+```
+###J: column selection
+```{r}
+head(gapminderFiveYearData[,"country"]) #by names
+head(gapminderFiveYearData[,country]) #by column
+gapminderFiveYearData[,list(country, year, pop)] #by list
+```
+This allows operations to be performed on columns:
+```{r}
+gapminderFiveYearData[,sum(gdpPercap)] #by colnames
+gapminderFiveYearData[,sum(gdpPercap*pop)] #by colnames
+gapminderFiveYearData[,mean(pop)] #by colnames
+gapminderFiveYearData[,mean(lifeExp)] #by colnames
+```
+###BY: group operation
+This is paricularly power in that we can apply operations to sets values, grouped "by":
+```{r}
+gapminderFiveYearData[j=sum(gdpPercap), by=year]
+gapminderFiveYearData[,sum(gdpPercap), year]
+gapminderFiveYearData[,mean(lifeExp), year]
+gapminderFiveYearData[,sum(pop), by=list(continent, year)]
+```
+As you can see, these results lend well to data we can tabulate or plot:
+```{r}
+library("gplots")
+plot(gapminderFiveYearData[,sum(pop), by=list(continent, year)]$year,
+     gapminderFiveYearData[,sum(pop), by=list(continent, year)]$V1,
+     col=rainbow(5)[as.numeric(as.factor(gapminderFiveYearData[,sum(pop), by=list(continent, year)]$continent))])
+legend("topleft", fill=rainbow(5), legend=levels(as.factor(gapminderFiveYearData[,sum(pop), by=list(continent, year)]$continent)))
+```
+New and Shiny: by=.EACHI enables more explicit control of the "by" feature. We could manually pull out years or countries we wish to deal with individually:
+```{r}
+gapminderFiveYearData[year=="1952" | year=="2002", j=sum(pop), by=year]
+gapminderFiveYearData[c("New Zealand","Australia"),sum(gdpPercap*pop)]
+gapminderFiveYearData[c("New Zealand","Australia"),sum(gdpPercap*pop), by=year]
+```
+Notice in both of the above cases the countries are grouped together. Unless specified countries will not be grouped, we can do this either explicitly `by=country` or use the `.EACHI` options for more complex `i` queries:
+```{r}
+gapminderFiveYearData[c("New Zealand","Australia"),sum(gdpPercap*pop), by=country]
+gapminderFiveYearData[c("New Zealand","Australia"),sum(gdpPercap*pop), by=.EACHI]
+```
+Group by multiple arguments explicitly may also give data in a more sensible format:
+```{r}
+gapminderFiveYearData[c("New Zealand","Australia"),sum(gdpPercap*pop), by=list(year, country)]
+```
+`by=.EACHI` is a little weird, it's an explicit way of restoring a previous version `data.table` functionality. Consider a simple operation of counting the rows returned:
+
+By default data.table counts all rows returned: 
+```{r}
+gapminderFiveYearData[c("New Zealand","Australia"), .N]
+```
+To restore previous functionality (an implicit by), `.by=.EACHI` will count the number of rows returned _for each_ i. Basically data.table was really clever and did it for you but some people took issue with a by being performed when it wasn't specified.
+```{r}
+gapminderFiveYearData[c("New Zealand","Australia"), .N, by=.EACHI]
+```
+
+## Keys
+`tables()` shows all tables and their SQL-like "keys", by default to keys are given:
+```{r}
+gapminderFiveYearData <- fread("gapminder-FiveYearData.csv")
+tables()
+```
+We can create a unique identifier as a key:
+```{r}
+rowID <- paste(gapminderFiveYearData$country, gapminderFiveYearData$year)
+head(rowID)
+tail(head(rowID))
+gapminderFiveYearData$rowID <- rowID
+gapminderFiveYearData
+setkey(gapminderFiveYearData, rowID)
+tables()
+```
+We can search rows `i` for this key:
+```{r}
+gapminderFiveYearData["New Zealand 1952",] #search row by key
+```
+In contrast to dataframes (rownames) duplicate keys are permitted:
+```{r}
+setkey(gapminderFiveYearData, country)
+gapminderFiveYearData["New Zealand",]
+```
+By default, alls rows are returned for each group (rather than only first for dataframe), the `mult="first"` or `"last"` can modify this:
+```{r}
+gapminderFiveYearData["New Zealand", mult="first"] 
+gapminderFiveYearData["New Zealand", mult="last"] 
+```
+
+Queries in data.tables aren't just *easier* they're **faster**
+```{r}
+gapminderFiveYearData["New Zealand", mult="first"] 
+system.time(gapminderFiveYearData["New Zealand", mult="first"]) #time 0.001s
+gapminderFiveYearData.dataframe <- as.data.frame(gapminderFiveYearData)
+gapminderFiveYearData.dataframe[gapminderFiveYearData.dataframe$country=="New Zealand",][1,]
+system.time(gapminderFiveYearData.dataframe[gapminderFiveYearData.dataframe$country=="New Zealand",][1,])
+```
+Ok, that didn't seem that different. They're powerful with larger datafiles though. Compare these examples for the same operation with dataframes and datatables.
+```{r}
+setkey(gapminderlarger, country)
+gapminderlarger["New Zealand", mult="first"] 
+system.time(gapminderlarger["New Zealand", mult="first"])
+gapminderlarger.dataframe <- as.data.frame(gapminderlarger)
+gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand",][1,]
+system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand",][1,])
+```
+Here's an example with multiple keys:
+```{r}
+setkey(gapminderlarger, country, year)
+gapminderlarger[list("New Zealand", 2007)]
+system.time(gapminderlarger[list("New Zealand", 2007)])
+head(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand" & gapminderlarger.dataframe$year=="2007",])
+system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand" & gapminderlarger.dataframe$year=="2007",])
+```
+
+`by` is faster than a simliar operation on dataframes too:
+```{r}
+gapminderlarger[,sum(gdpPercap), year]
+system.time(gapminderlarger[,sum(gdpPercap), year])
+tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe$year,sum)
+system.time(tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe$year,sum))
+```
