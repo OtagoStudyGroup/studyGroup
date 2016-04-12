@@ -1,0 +1,11 @@
+Handling large data files in R: data.table and more!
+
+Run the following code in a bash or mac terminal to obtain a copy of this repository:
+
+`git clone git@github.com:TomKellyGenetics/syska-R-data-table.git`
+
+Lesson developed using the gapminder dataset (as used in Software Carpentry and Research Bazaar), data and examples of ggplot or pylr from this repository https://github.com/resbaz/r-novice-gapminder
+
+Materials developed at the University of Otago (Biochemistry department) by postgraduate students. This lesson can be followed with the commented R script, Rmarkdown document, or any preferred document produced by `knitr`.
+
+Uses a number of R packages in read/write files with benchmarking on file i/o and a comparison of data.table class to the data.frame on which it is based (and most R users are familiar with). Most of these packages can be installed on the fly on CRAN if network access is avaiable during the lesson, due to large dependencies we recommend install `devtools` and `feather` in advance along these features are only discussed in terms of benchmarking similar functionality in other packages. Large data files are used in the lesson to demonstrate the power and speed of various features, however these were not included the the repository on github due to limiting speed for lesson participants to clone the repository during the lesson. These large data files are constructed with rbind of many copies of the dataset used in the exercises, this demonstrates the power of these packages to deal with data files up to the scales of mega- or giga-bytes which are frequently encountered in Genomics or Bioinformatics analysis. 
