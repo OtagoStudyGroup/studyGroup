@@ -5,6 +5,7 @@ output:
 #output: 
 #  pdf_document:
 #    keep_tex: true
+#output: word_document
 ---
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path="Figs/", warning=FALSE, message=FALSE)
@@ -108,6 +109,14 @@ plyr::ddply(
 Yeah you get the idea.
 
 Data tables have built-in "methods" for a range of functions, these are often faster than standard dataframes or matrices, if these aren't found it uses dataframe functions. A "Data Table" is compatible with any function from any package designed for a "Data Frame".
+
+```{r, include=FALSE}
+#generate gapminder-large data
+source("gapminderlarger.R")
+fwrite(gapminderlarge, file="gapminder-largecsv")
+fwrite(gapminderlarger, file="gapminder-larger.csv")
+```
+
 
 ## File I/O (Input/Output)
 fread is "fast read", and it's **fast**, even for large data files. Let's try it out on some larger datafiles:
