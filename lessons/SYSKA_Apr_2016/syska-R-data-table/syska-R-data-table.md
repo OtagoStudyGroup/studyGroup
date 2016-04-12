@@ -26,7 +26,7 @@ install.packages("data.table", repos = "https://Rdatatable.github.io/data.table"
 ```
 ## 
 ## The downloaded source packages are in
-## 	'/tmp/RtmpfyhDYG/downloaded_packages'
+## 	'/tmp/Rtmp3U0YQL/downloaded_packages'
 ```
 
 ```r
@@ -195,18 +195,11 @@ data tables are backwards compatible with a lot of operations which use data.fra
 Such as plots...
 
 ```r
-dev.off()
-```
-
-```
-## null device 
-##           1
-```
-
-```r
 ggplot(data = gapminderFiveYearData, aes(x = lifeExp, y = gdpPercap, color=continent)) +
   geom_point()
 ```
+
+![](Figs/unnamed-chunk-7-1.png)\
 ... and linear models...
 
 ```r
@@ -344,13 +337,6 @@ fread is "fast read", and it's **fast**, even for large data files. Let's try it
 ```r
 gapminderlarge <- fread("gapminder-large.csv", header=T)
 ```
-
-```
-## 
-Read 64.6% of 1656288 rows
-Read 96.6% of 1656288 rows
-Read 1656288 rows and 11 (of 11) columns from 0.146 GB file in 00:00:04
-```
 fread is smart, it auto detects column classes, separators, headers, nrows (for a regularly separated file). We can use the same comand for a whole bunch of file formats. All the usual reading options can be specified manually...
 
 ```r
@@ -384,9 +370,9 @@ gapminderlarger <- fread("gapminder-larger.csv")
 
 ```
 ## 
-Read 36.5% of 6625152 rows
-Read 64.0% of 6625152 rows
-Read 91.5% of 6625152 rows
+Read 42.4% of 6625152 rows
+Read 70.5% of 6625152 rows
+Read 98.6% of 6625152 rows
 Read 6625152 rows and 6 (of 6) columns from 0.321 GB file in 00:00:05
 ```
 It's so fast it tells you. Let's compare that with base R:
@@ -397,7 +383,7 @@ system.time(gapminderlarger.dataframe <- read.csv("gapminder-larger.csv", header
 
 ```
 ##    user  system elapsed 
-##  22.892   0.200  23.115
+##  22.088   0.556  22.668
 ```
 The same operation took much longer with base R, with larger files (or repeating this many times) that ~6x difference could mean a lot for your workflow. 
 
@@ -415,7 +401,7 @@ system.time(fwrite(gapminderlarger, file="test.csv"))
 
 ```
 ##    user  system elapsed 
-##  18.296   0.388  19.416
+##  17.724   0.404  20.595
 ```
 
 ```r
@@ -424,7 +410,7 @@ system.time(write.csv(gapminderlarger, file="test.csv"))
 
 ```
 ##    user  system elapsed 
-##  38.184   0.340  38.572
+##  39.436   0.416  41.475
 ```
 
 ## readr (Hadley Wickham and RStudio)
@@ -449,7 +435,7 @@ system.time(read_table("gapminder-FiveYearData.txt"))
 
 ```
 ##    user  system elapsed 
-##   0.016   0.004   0.022
+##   0.020   0.004   0.272
 ```
 
 ```r
@@ -458,7 +444,7 @@ system.time(read.table("gapminder-FiveYearData.txt"))
 
 ```
 ##    user  system elapsed 
-##   0.016   0.000   0.012
+##   0.012   0.000   0.012
 ```
 Even on a small file `readr` is faster than base R. This also holds for larger csv files:
 
@@ -468,7 +454,7 @@ system.time(read_csv("gapminder-larger.csv"))
 
 ```
 ##    user  system elapsed 
-##   4.268   0.176   4.452
+##   4.232   0.036   4.274
 ```
 
 ```r
@@ -477,7 +463,7 @@ system.time(read.csv("gapminder-larger.csv"))
 
 ```
 ##    user  system elapsed 
-##  23.004   0.300  23.331
+##  22.132   0.228  22.385
 ```
 `readr` also has a handy progress bar allowign us to monitor progress. There is an equivalent `readxl` package with a `read_excel` function compatible with xls or xlsx files and enables sheet selection. This is a relatively new alternative to the `xlsx` package and it's `read.xlsx` function which are difficult to work with (as it is java and perl dependent).
 
@@ -498,7 +484,7 @@ gapminderFiveYearData.big
 ```
 ## An object of class "big.matrix"
 ## Slot "address":
-## <pointer: 0xba98a50>
+## <pointer: 0x154ec0a0>
 ```
 
 ```r
@@ -569,7 +555,7 @@ system.time(gapminderlarger.big <- read.big.matrix("gapminder-larger.csv"))
 
 ```
 ##    user  system elapsed 
-##  12.656   0.164  12.836
+##  12.892   0.204  13.112
 ```
 
 ```r
@@ -578,7 +564,7 @@ system.time(write.big.matrix(gapminderFiveYearData.big, "test.csv"))
 
 ```
 ##    user  system elapsed 
-##   0.012   0.000   0.012
+##   0.008   0.004   0.013
 ```
 
 ## New and Shiny: FEATHER
@@ -630,7 +616,7 @@ system.time(write_feather(gapminderlarger, path))
 
 ```
 ##    user  system elapsed 
-##   0.300   0.200   1.311
+##   0.324   0.200   1.404
 ```
 
 ```r
@@ -639,7 +625,7 @@ system.time(gapminderlarger.feather <- read_feather(path))
 
 ```
 ##    user  system elapsed 
-##   0.344   0.016   0.362
+##   0.344   0.012   0.358
 ```
 
 Or install and run in Python:
@@ -1206,14 +1192,14 @@ tables()
 ##      NAME                           NROW NCOL  MB
 ## [1,] gapminderFiveYearData         1,704    6   1
 ## [2,] gapminderFiveYearDataCrop     1,000    6   1
-## [3,] gapminderlarge            1,656,288   11 294
+## [3,] gapminderlarge            1,656,288    6  70
 ## [4,] gapminderlarger           6,625,152    6 279
-##      COLS                                                        KEY
-## [1,] country,year,pop,continent,lifeExp,gdpPercap                   
-## [2,] place,time,people,big place,life,money                         
-## [3,] V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap    
-## [4,] country,year,pop,continent,lifeExp,gdpPercap                   
-## Total: 575MB
+##      COLS                                         KEY
+## [1,] country,year,pop,continent,lifeExp,gdpPercap    
+## [2,] place,time,people,big place,life,money          
+## [3,] country,year,pop,continent,lifeExp,gdpPercap    
+## [4,] country,year,pop,continent,lifeExp,gdpPercap    
+## Total: 351MB
 ```
 We can create a unique identifier as a key:
 
@@ -1277,14 +1263,14 @@ tables()
 ##      NAME                           NROW NCOL  MB
 ## [1,] gapminderFiveYearData         1,704    7   1
 ## [2,] gapminderFiveYearDataCrop     1,000    6   1
-## [3,] gapminderlarge            1,656,288   11 294
+## [3,] gapminderlarge            1,656,288    6  70
 ## [4,] gapminderlarger           6,625,152    6 279
-##      COLS                                                        KEY  
-## [1,] country,year,pop,continent,lifeExp,gdpPercap,rowID          rowID
-## [2,] place,time,people,big place,life,money                           
-## [3,] V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap      
-## [4,] country,year,pop,continent,lifeExp,gdpPercap                     
-## Total: 575MB
+##      COLS                                               KEY  
+## [1,] country,year,pop,continent,lifeExp,gdpPercap,rowID rowID
+## [2,] place,time,people,big place,life,money                  
+## [3,] country,year,pop,continent,lifeExp,gdpPercap            
+## [4,] country,year,pop,continent,lifeExp,gdpPercap            
+## Total: 351MB
 ```
 We can search rows `i` for this key:
 
@@ -1355,7 +1341,7 @@ system.time(gapminderFiveYearData["New Zealand", mult="first"]) #time 0.001s
 
 ```
 ##    user  system elapsed 
-##   0.004   0.000   0.001
+##   0.000   0.000   0.001
 ```
 
 ```r
@@ -1394,7 +1380,7 @@ system.time(gapminderlarger["New Zealand", mult="first"])
 
 ```
 ##    user  system elapsed 
-##   0.000   0.000   0.001
+##   0.004   0.000   0.001
 ```
 
 ```r
@@ -1413,7 +1399,7 @@ system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Ze
 
 ```
 ##    user  system elapsed 
-##   0.240   0.004   0.246
+##   0.228   0.008   0.239
 ```
 Here's an example with multiple keys:
 
@@ -1466,7 +1452,7 @@ system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Ze
 
 ```
 ##    user  system elapsed 
-##   1.772   0.040   1.810
+##   1.748   0.032   1.782
 ```
 
 `by` is faster than a simliar operation on dataframes too:
@@ -1497,7 +1483,7 @@ system.time(gapminderlarger[,sum(gdpPercap), year])
 
 ```
 ##    user  system elapsed 
-##   0.076   0.000   0.077
+##   0.076   0.000   0.076
 ```
 
 ```r
@@ -1517,5 +1503,7 @@ system.time(tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe
 
 ```
 ##    user  system elapsed 
-##   0.492   0.064   0.555
+##   0.468   0.048   0.518
 ```
+
+

@@ -1,7 +1,7 @@
 ---
-output:
-  html_document:
-    keep_md: true
+#output:
+#  html_document:
+#    keep_md: true
 #output: 
 #  pdf_document:
 #    keep_tex: true
@@ -28,7 +28,7 @@ library("data.table")
 ```
 
 Install development version from GitHub (current version 1.9.7)
-```{r}
+```{r, eval=FALSE}
 install.packages("data.table", repos = "https://Rdatatable.github.io/data.table", type = "source") #v1.9.7
 library("data.table")
 ```
@@ -72,7 +72,7 @@ gapminderFiveYearData
 data tables are backwards compatible with a lot of operations which use data.frames
 Such as plots...
 ```{r}
-dev.off()
+
 ggplot(data = gapminderFiveYearData, aes(x = lifeExp, y = gdpPercap, color=continent)) +
   geom_point()
 ```
@@ -247,7 +247,7 @@ Note that FEATHER is designed for data _already_ loaded into python or R.
 
 ### READ 
 **base R** | **data table** | **readr** | **bigmemory** | **feather**
---- | --- | --- | ---
+--- | --- | --- | --- | ---
 `read.csv`   | `fread`         | `read_csv` | `read.big.matrix` | `read_feather`
 52.203s | 8.154s | 11.120s | 28.647s | 2.414s
 
