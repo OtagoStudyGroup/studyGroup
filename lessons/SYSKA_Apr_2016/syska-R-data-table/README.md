@@ -109,6 +109,14 @@ Yeah you get the idea.
 
 Data tables have built-in "methods" for a range of functions, these are often faster than standard dataframes or matrices, if these aren't found it uses dataframe functions. A "Data Table" is compatible with any function from any package designed for a "Data Frame".
 
+```{r, include=FALSE}
+#generate gapminder-large data
+source("gapminderlarger.R")
+fwrite(gapminderlarge, file="gapminder-largecsv")
+fwrite(gapminderlarger, file="gapminder-larger.csv")
+```
+
+
 ## File I/O (Input/Output)
 fread is "fast read", and it's **fast**, even for large data files. Let's try it out on some larger datafiles:
 ```{r}
@@ -143,6 +151,32 @@ They're also fast to write data, compared to base R:
 system.time(fwrite(gapminderlarger, file="test.csv"))
 system.time(write.csv(gapminderlarger, file="test.csv"))
 ```
+
+## readr (Hadley Wickham and RStudio)
+Another package enables faster alternatives to existing read functions in base R: these work almost exactly the same as their base R counterparts.
+
+ | **base R** | **readr**
+--- | --- | ---
+spaced file | `read.table`   | `read_table`
+fixed-width file | `read.fwf`   | `read_fwf`
+comma-separated file | `read.csv`   | `read_csv`
+semicolon-separated file | `read.csv2`   | `read_csv2`
+tab-delimited file | `read.table`   | `read_tsv`
+comma-separated file | `read.csv`   | `read_csv`
+file or string `readLines`   | `read_lines` or `read_file`
+
+Let's try it out on a space-delimited file:
+```{r}
+library("readr")
+system.time(read_table("gapminder-FiveYearData.txt"))
+system.time(read.table("gapminder-FiveYearData.txt"))
+```
+Even on a small file `readr` is faster than base R. This also holds for larger csv files:
+```{R}
+system.time(read_csv("gapminder-larger.csv"))
+system.time(read.csv("gapminder-larger.csv"))
+```
+`readr` also has a handy progress bar allowign us to monitor progress. There is an equivalent `readxl` package with a `read_excel` function compatible with xls or xlsx files and enables sheet selection. This is a relatively new alternative to the `xlsx` package and it's `read.xlsx` function which are difficult to work with (as it is java and perl dependent).
 
 ## Another solution: bigmemory
 ```{r}
@@ -211,10 +245,10 @@ Note that FEATHER is designed for data _already_ loaded into python or R.
 ## FILE I/O Summary
 
 ### READ 
-**base R** | **data table** | **bigmemory** | **feather**
+**base R** | **data table** | **readr** | **bigmemory** | **feather**
 --- | --- | --- | ---
-`read.csv`   | `fread`         | `read.big.matrix` | `read_feather`
-52.203s | 8.154s | 28.647s | 2.414s
+`read.csv`   | `fread`         | `read_csv` | `read.big.matrix` | `read_feather`
+52.203s | 8.154s | 11.120s | 28.647s | 2.414s
 
 ### Convert dataframe to format 
 **base R** | **data table** | **bigmemory** | **feather**

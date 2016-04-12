@@ -82,6 +82,24 @@ fwrite(gapminderlarger, file="test.tsv", sep="\t")
 system.time(write.csv(gapminderlarger, file="test.csv")) #46.216s user, 71.382s elapsed
 #rm(gapminderlarger)
 
+#another R reading package: readr (Hadley Wickham and RStudio)
+library("readr")
+system.time(read_table("gapminder-FiveYearData.txt")) #faster for space delimited files
+system.time(read.table("gapminder-FiveYearData.txt"))
+system.time(read_csv("gapminder-larger.csv")) #faster for csv (on large data file)
+system.time(read.csv("gapminder-larger.csv"))
+
+#readr fixed-width file
+read_table #readr equivalent of read.table
+read_fwf #readr equivalent of read.fwf
+read_csv #readr equivalent of read.csv
+read_tsv #readr equivalent of read.tss
+read_lines #readr equivalent of readLines
+
+#readxl packge
+library("readxl")
+read_excel #reads xls or xlsx file (specifies which sheet to extract)
+#new alternative to read.xlsx (xlsx) package (java and perl dependent)
 
 #bigmemory
 library("bigmemory")
@@ -118,6 +136,7 @@ system.time(gapminderlarger <- read_feather(path)) #2.344 user, 2.414s elapsed
 ##READ
 #base R: read.csv: 57.203s
 #data.table: fread: 8.154s
+#readr: read_csv: 11.120s
 #bigmemory: 28.647s
 #feather: 2.414s
 
