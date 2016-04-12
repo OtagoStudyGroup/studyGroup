@@ -113,7 +113,7 @@ Data tables have built-in "methods" for a range of functions, these are often fa
 ```{r, include=FALSE}
 #generate gapminder-large data
 source("gapminderlarger.R")
-fwrite(gapminderlarge, file="gapminder-largecsv")
+fwrite(gapminderlarge, file="gapminder-large.csv")
 fwrite(gapminderlarger, file="gapminder-larger.csv")
 ```
 
@@ -412,4 +412,10 @@ gapminderlarger[,sum(gdpPercap), year]
 system.time(gapminderlarger[,sum(gdpPercap), year])
 tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe$year,sum)
 system.time(tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe$year,sum))
+```
+
+```{r, include=FALSE}
+#export md to README
+system("cat README.short syska-R-data-table.md > README.md ")
+system("cat README.short syska-R-data-table.tex > README.tex")
 ```

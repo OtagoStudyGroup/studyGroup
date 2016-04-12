@@ -26,7 +26,7 @@ install.packages("data.table", repos = "https://Rdatatable.github.io/data.table"
 ```
 ## 
 ## The downloaded source packages are in
-## 	'/tmp/Rtmp3qV1Tb/downloaded_packages'
+## 	'/tmp/RtmpfyhDYG/downloaded_packages'
 ```
 
 ```r
@@ -335,6 +335,9 @@ Yeah you get the idea.
 
 Data tables have built-in "methods" for a range of functions, these are often faster than standard dataframes or matrices, if these aren't found it uses dataframe functions. A "Data Table" is compatible with any function from any package designed for a "Data Frame".
 
+
+
+
 ## File I/O (Input/Output)
 fread is "fast read", and it's **fast**, even for large data files. Let's try it out on some larger datafiles:
 
@@ -344,8 +347,8 @@ gapminderlarge <- fread("gapminder-large.csv", header=T)
 
 ```
 ## 
-Read 53.1% of 1656288 rows
-Read 96.0% of 1656288 rows
+Read 64.6% of 1656288 rows
+Read 96.6% of 1656288 rows
 Read 1656288 rows and 11 (of 11) columns from 0.146 GB file in 00:00:04
 ```
 fread is smart, it auto detects column classes, separators, headers, nrows (for a regularly separated file). We can use the same comand for a whole bunch of file formats. All the usual reading options can be specified manually...
@@ -381,19 +384,10 @@ gapminderlarger <- fread("gapminder-larger.csv")
 
 ```
 ## 
-Read 0.0% of 6625152 rows
-Read 14.9% of 6625152 rows
-Read 28.4% of 6625152 rows
-Read 39.7% of 6625152 rows
-Read 50.1% of 6625152 rows
-Read 53.1% of 6625152 rows
-Read 62.5% of 6625152 rows
-Read 72.8% of 6625152 rows
-Read 77.3% of 6625152 rows
-Read 86.3% of 6625152 rows
-Read 94.5% of 6625152 rows
-Read 95.1% of 6625152 rows
-Read 6625152 rows and 13 (of 13) columns from 0.702 GB file in 00:00:15
+Read 36.5% of 6625152 rows
+Read 64.0% of 6625152 rows
+Read 91.5% of 6625152 rows
+Read 6625152 rows and 6 (of 6) columns from 0.321 GB file in 00:00:05
 ```
 It's so fast it tells you. Let's compare that with base R:
 
@@ -403,7 +397,7 @@ system.time(gapminderlarger.dataframe <- read.csv("gapminder-larger.csv", header
 
 ```
 ##    user  system elapsed 
-##  59.016   0.736  59.826
+##  22.892   0.200  23.115
 ```
 The same operation took much longer with base R, with larger files (or repeating this many times) that ~6x difference could mean a lot for your workflow. 
 
@@ -421,7 +415,7 @@ system.time(fwrite(gapminderlarger, file="test.csv"))
 
 ```
 ##    user  system elapsed 
-##  26.508   0.724  27.266
+##  18.296   0.388  19.416
 ```
 
 ```r
@@ -430,8 +424,62 @@ system.time(write.csv(gapminderlarger, file="test.csv"))
 
 ```
 ##    user  system elapsed 
-##  47.064   0.540  49.785
+##  38.184   0.340  38.572
 ```
+
+## readr (Hadley Wickham and RStudio)
+Another package enables faster alternatives to existing read functions in base R: these work almost exactly the same as their base R counterparts.
+
+ | **base R** | **readr**
+--- | --- | ---
+spaced file | `read.table`   | `read_table`
+fixed-width file | `read.fwf`   | `read_fwf`
+comma-separated file | `read.csv`   | `read_csv`
+semicolon-separated file | `read.csv2`   | `read_csv2`
+tab-delimited file | `read.table`   | `read_tsv`
+comma-separated file | `read.csv`   | `read_csv`
+file or string `readLines`   | `read_lines` or `read_file`
+
+Let's try it out on a space-delimited file:
+
+```r
+library("readr")
+system.time(read_table("gapminder-FiveYearData.txt"))
+```
+
+```
+##    user  system elapsed 
+##   0.016   0.004   0.022
+```
+
+```r
+system.time(read.table("gapminder-FiveYearData.txt"))
+```
+
+```
+##    user  system elapsed 
+##   0.016   0.000   0.012
+```
+Even on a small file `readr` is faster than base R. This also holds for larger csv files:
+
+```r
+system.time(read_csv("gapminder-larger.csv"))
+```
+
+```
+##    user  system elapsed 
+##   4.268   0.176   4.452
+```
+
+```r
+system.time(read.csv("gapminder-larger.csv"))
+```
+
+```
+##    user  system elapsed 
+##  23.004   0.300  23.331
+```
+`readr` also has a handy progress bar allowign us to monitor progress. There is an equivalent `readxl` package with a `read_excel` function compatible with xls or xlsx files and enables sheet selection. This is a relatively new alternative to the `xlsx` package and it's `read.xlsx` function which are difficult to work with (as it is java and perl dependent).
 
 ## Another solution: bigmemory
 
@@ -450,7 +498,7 @@ gapminderFiveYearData.big
 ```
 ## An object of class "big.matrix"
 ## Slot "address":
-## <pointer: 0x5a27d6e0>
+## <pointer: 0xba98a50>
 ```
 
 ```r
@@ -521,7 +569,7 @@ system.time(gapminderlarger.big <- read.big.matrix("gapminder-larger.csv"))
 
 ```
 ##    user  system elapsed 
-##  28.208   0.376  28.616
+##  12.656   0.164  12.836
 ```
 
 ```r
@@ -530,7 +578,7 @@ system.time(write.big.matrix(gapminderFiveYearData.big, "test.csv"))
 
 ```
 ##    user  system elapsed 
-##   0.012   0.000   0.011
+##   0.012   0.000   0.012
 ```
 
 ## New and Shiny: FEATHER
@@ -582,7 +630,7 @@ system.time(write_feather(gapminderlarger, path))
 
 ```
 ##    user  system elapsed 
-##   1.236   0.372   2.830
+##   0.300   0.200   1.311
 ```
 
 ```r
@@ -591,7 +639,7 @@ system.time(gapminderlarger.feather <- read_feather(path))
 
 ```
 ##    user  system elapsed 
-##   4.936   0.144   5.088
+##   0.344   0.016   0.362
 ```
 
 Or install and run in Python:
@@ -607,10 +655,10 @@ Note that FEATHER is designed for data _already_ loaded into python or R.
 ## FILE I/O Summary
 
 ### READ 
-**base R** | **data table** | **bigmemory** | **feather**
+**base R** | **data table** | **readr** | **bigmemory** | **feather**
 --- | --- | --- | ---
-`read.csv`   | `fread`         | `read.big.matrix` | `read_feather`
-52.203s | 8.154s | 28.647s | 2.414s
+`read.csv`   | `fread`         | `read_csv` | `read.big.matrix` | `read_feather`
+52.203s | 8.154s | 11.120s | 28.647s | 2.414s
 
 ### Convert dataframe to format 
 **base R** | **data table** | **bigmemory** | **feather**
@@ -1028,7 +1076,7 @@ plot(gapminderFiveYearData[,sum(pop), by=list(continent, year)]$year,
 legend("topleft", fill=rainbow(5), legend=levels(as.factor(gapminderFiveYearData[,sum(pop), by=list(continent, year)]$continent)))
 ```
 
-![](Figs/unnamed-chunk-29-1.png)\
+![](Figs/unnamed-chunk-32-1.png)\
 New and Shiny: by=.EACHI enables more explicit control of the "by" feature. We could manually pull out years or countries we wish to deal with individually:
 
 ```r
@@ -1155,17 +1203,17 @@ tables()
 ```
 
 ```
-##      NAME                           NROW NCOL    MB
-## [1,] gapminderFiveYearData         1,704    6     1
-## [2,] gapminderFiveYearDataCrop     1,000    6     1
-## [3,] gapminderlarge            1,656,288   11   294
-## [4,] gapminderlarger           6,625,152   13 1,248
-##      COLS                                                              KEY
-## [1,] country,year,pop,continent,lifeExp,gdpPercap                         
-## [2,] place,time,people,big place,life,money                               
-## [3,] V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap          
-## [4,] V1,V1,V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap    
-## Total: 1,544MB
+##      NAME                           NROW NCOL  MB
+## [1,] gapminderFiveYearData         1,704    6   1
+## [2,] gapminderFiveYearDataCrop     1,000    6   1
+## [3,] gapminderlarge            1,656,288   11 294
+## [4,] gapminderlarger           6,625,152    6 279
+##      COLS                                                        KEY
+## [1,] country,year,pop,continent,lifeExp,gdpPercap                   
+## [2,] place,time,people,big place,life,money                         
+## [3,] V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap    
+## [4,] country,year,pop,continent,lifeExp,gdpPercap                   
+## Total: 575MB
 ```
 We can create a unique identifier as a key:
 
@@ -1226,22 +1274,17 @@ tables()
 ```
 
 ```
-##      NAME                           NROW NCOL    MB
-## [1,] gapminderFiveYearData         1,704    7     1
-## [2,] gapminderFiveYearDataCrop     1,000    6     1
-## [3,] gapminderlarge            1,656,288   11   294
-## [4,] gapminderlarger           6,625,152   13 1,248
-##      COLS                                                             
-## [1,] country,year,pop,continent,lifeExp,gdpPercap,rowID               
+##      NAME                           NROW NCOL  MB
+## [1,] gapminderFiveYearData         1,704    7   1
+## [2,] gapminderFiveYearDataCrop     1,000    6   1
+## [3,] gapminderlarge            1,656,288   11 294
+## [4,] gapminderlarger           6,625,152    6 279
+##      COLS                                                        KEY  
+## [1,] country,year,pop,continent,lifeExp,gdpPercap,rowID          rowID
 ## [2,] place,time,people,big place,life,money                           
 ## [3,] V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap      
-## [4,] V1,V1,V1,V1,V1,V1,V1,country,year,pop,continent,lifeExp,gdpPercap
-##      KEY  
-## [1,] rowID
-## [2,]      
-## [3,]      
-## [4,]      
-## Total: 1,544MB
+## [4,] country,year,pop,continent,lifeExp,gdpPercap                     
+## Total: 575MB
 ```
 We can search rows `i` for this key:
 
@@ -1312,7 +1355,7 @@ system.time(gapminderFiveYearData["New Zealand", mult="first"]) #time 0.001s
 
 ```
 ##    user  system elapsed 
-##   0.000   0.000   0.001
+##   0.004   0.000   0.001
 ```
 
 ```r
@@ -1331,7 +1374,7 @@ system.time(gapminderFiveYearData.dataframe[gapminderFiveYearData.dataframe$coun
 
 ```
 ##    user  system elapsed 
-##   0.000   0.000   0.001
+##       0       0       0
 ```
 Ok, that didn't seem that different. They're powerful with larger datafiles though. Compare these examples for the same operation with dataframes and datatables.
 
@@ -1341,10 +1384,8 @@ gapminderlarger["New Zealand", mult="first"]
 ```
 
 ```
-##      V1 V1.1 V1.2 V1.3 V1.4 V1.5 V1.6     country year     pop continent
-## 1: 1093 1093 1093 1093 1093 1093 1093 New Zealand 1952 1994794   Oceania
-##    lifeExp gdpPercap
-## 1:   69.39  10556.58
+##        country year     pop continent lifeExp gdpPercap
+## 1: New Zealand 1952 1994794   Oceania   69.39  10556.58
 ```
 
 ```r
@@ -1353,7 +1394,7 @@ system.time(gapminderlarger["New Zealand", mult="first"])
 
 ```
 ##    user  system elapsed 
-##   0.004   0.000   0.001
+##   0.000   0.000   0.001
 ```
 
 ```r
@@ -1362,10 +1403,8 @@ gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand",][1,]
 ```
 
 ```
-##           V1   V1   V1   V1   V1   V1   V1     country year     pop
-## 4245697 1093 1093 1093 1093 1093 1093 1093 New Zealand 1952 1994794
-##         continent lifeExp gdpPercap
-## 4245697   Oceania   69.39  10556.58
+##             country year     pop continent lifeExp gdpPercap
+## 4245697 New Zealand 1952 1994794   Oceania   69.39  10556.58
 ```
 
 ```r
@@ -1374,7 +1413,7 @@ system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Ze
 
 ```
 ##    user  system elapsed 
-##   0.328   0.004   0.334
+##   0.240   0.004   0.246
 ```
 Here's an example with multiple keys:
 
@@ -1384,30 +1423,18 @@ gapminderlarger[list("New Zealand", 2007)]
 ```
 
 ```
-##            V1    V1.1    V1.2   V1.3   V1.4  V1.5 V1.6     country year
-##    1:    1104    1104    1104   1104   1104  1104 1104 New Zealand 2007
-##    2:    2808    2808    2808   2808   2808  2808 2808 New Zealand 2007
-##    3:    4512    4512    4512   4512   4512  4512 4512 New Zealand 2007
-##    4:    6216    6216    6216   6216   6216  6216 6216 New Zealand 2007
-##    5:    7920    7920    7920   7920   7920  7920 7920 New Zealand 2007
-##   ---                                                                  
-## 3884: 6617736 3305160 1648872 820728 820728 84600 2808 New Zealand 2007
-## 3885: 6619440 3306864 1650576 822432 822432 86304 4512 New Zealand 2007
-## 3886: 6621144 3308568 1652280 824136 824136 88008 6216 New Zealand 2007
-## 3887: 6622848 3310272 1653984 825840 825840 89712 7920 New Zealand 2007
-## 3888: 6624552 3311976 1655688 827544 827544 91416 9624 New Zealand 2007
-##           pop continent lifeExp gdpPercap
-##    1: 4115771   Oceania  80.204  25185.01
-##    2: 4115771   Oceania  80.204  25185.01
-##    3: 4115771   Oceania  80.204  25185.01
-##    4: 4115771   Oceania  80.204  25185.01
-##    5: 4115771   Oceania  80.204  25185.01
-##   ---                                    
-## 3884: 4115771   Oceania  80.204  25185.01
-## 3885: 4115771   Oceania  80.204  25185.01
-## 3886: 4115771   Oceania  80.204  25185.01
-## 3887: 4115771   Oceania  80.204  25185.01
-## 3888: 4115771   Oceania  80.204  25185.01
+##           country year     pop continent lifeExp gdpPercap
+##    1: New Zealand 2007 4115771   Oceania  80.204  25185.01
+##    2: New Zealand 2007 4115771   Oceania  80.204  25185.01
+##    3: New Zealand 2007 4115771   Oceania  80.204  25185.01
+##    4: New Zealand 2007 4115771   Oceania  80.204  25185.01
+##    5: New Zealand 2007 4115771   Oceania  80.204  25185.01
+##   ---                                                     
+## 3884: New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 3885: New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 3886: New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 3887: New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 3888: New Zealand 2007 4115771   Oceania  80.204  25185.01
 ```
 
 ```r
@@ -1416,7 +1443,7 @@ system.time(gapminderlarger[list("New Zealand", 2007)])
 
 ```
 ##    user  system elapsed 
-##   0.000   0.000   0.002
+##   0.000   0.000   0.001
 ```
 
 ```r
@@ -1424,20 +1451,13 @@ head(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Zealand" 
 ```
 
 ```
-##           V1   V1   V1   V1   V1   V1   V1     country year     pop
-## 4245708 1104 1104 1104 1104 1104 1104 1104 New Zealand 2007 4115771
-## 4245720 2808 2808 2808 2808 2808 2808 2808 New Zealand 2007 4115771
-## 4245732 4512 4512 4512 4512 4512 4512 4512 New Zealand 2007 4115771
-## 4245744 6216 6216 6216 6216 6216 6216 6216 New Zealand 2007 4115771
-## 4245756 7920 7920 7920 7920 7920 7920 7920 New Zealand 2007 4115771
-## 4245768 9624 9624 9624 9624 9624 9624 9624 New Zealand 2007 4115771
-##         continent lifeExp gdpPercap
-## 4245708   Oceania  80.204  25185.01
-## 4245720   Oceania  80.204  25185.01
-## 4245732   Oceania  80.204  25185.01
-## 4245744   Oceania  80.204  25185.01
-## 4245756   Oceania  80.204  25185.01
-## 4245768   Oceania  80.204  25185.01
+##             country year     pop continent lifeExp gdpPercap
+## 4245708 New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 4245720 New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 4245732 New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 4245744 New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 4245756 New Zealand 2007 4115771   Oceania  80.204  25185.01
+## 4245768 New Zealand 2007 4115771   Oceania  80.204  25185.01
 ```
 
 ```r
@@ -1446,7 +1466,7 @@ system.time(gapminderlarger.dataframe[gapminderlarger.dataframe$country=="New Ze
 
 ```
 ##    user  system elapsed 
-##   1.908   0.016   1.924
+##   1.772   0.040   1.810
 ```
 
 `by` is faster than a simliar operation on dataframes too:
@@ -1477,7 +1497,7 @@ system.time(gapminderlarger[,sum(gdpPercap), year])
 
 ```
 ##    user  system elapsed 
-##   0.076   0.000   0.073
+##   0.076   0.000   0.077
 ```
 
 ```r
@@ -1497,5 +1517,5 @@ system.time(tapply(gapminderlarger.dataframe$gdpPercap,gapminderlarger.dataframe
 
 ```
 ##    user  system elapsed 
-##   0.440   0.024   0.462
+##   0.492   0.064   0.555
 ```
