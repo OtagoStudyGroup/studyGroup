@@ -1,0 +1,9 @@
+---
+title: Intro to R
+text: First session, in a series, covering the start of the software carpentry R programming materials
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/OtagoStudyGroup/studyGroup/issues/27
+date: 2016-05-12
+startTime: '15:30'
+endTime: '16:30'
+---
