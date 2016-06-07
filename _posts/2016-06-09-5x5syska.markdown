@@ -1,0 +1,9 @@
+---
+title: June 5x5 lightning SYSKA
+text: 5 speakers, 5 minutes each on new and interesting topics
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/OtagoStudyGroup/studyGroup/issues/31
+date: 2016-06-09
+startTime: '11:00'
+endTime: '12:00'
+---
