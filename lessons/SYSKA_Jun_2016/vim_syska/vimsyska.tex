@@ -1,0 +1,129 @@
+\documentclass[a4paper, 12pt]{article}
+
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+
+\section{Cool Tips and tricks in Vim and Vim Plugin}
+
+Vim is a text editor that focuses on efficiency and speed (kind of).
+In this wee syska, I will show you some cool stuff you can do with vim.
+I will first show you some tips and tricks using just the original vim functionality, and then show you some cool plugins that will make you want to start using vim (hopefully).
+
+\section{Cool tips and tricks}
+
+\subsection{changing cases}
+
+I have changed the setting of my computer so the caps lock key is equivalent to the control key (because control key is too inconvenient to press at its original position).
+When I type, I usually press shift to make everything upper case, but if I have to type a lot of uppercase letters (maybe in combination with numbers), it's a pain to do all this while holding the shift button down.\\
+
+Alternatively, I type everything in lower case first, then convert it into uppercase letters by pressing \texttt{gU}.
+For example, lets change the subsection title to upper case by pressing \texttt{gUi\{} while the cursor is inside the curly bracket.
+To change it into lower case, use \texttt{gu} instead of \texttt{gU}, and to swap the cases, use \texttt{g~}
+\begin{quote}
+
+
+
+
+Example: flip the case of this sentence
+
+
+
+
+\end{quote}
+
+\subsection{Search, matches, and substitution}
+
+This tip is to extend the power of seaches and substitutions that you can do in vim.
+In vim, you can enter word search by pressing \texttt{/}.
+To substitute every matching word in the document with a replacement, type  in the command \texttt{:\%s/query/replacement/g}.
+If you put a `c' after the `g', it will ask you everytime if you want to replace it for that occurrence.
+
+YES, MICROSOFT WORD CAN DO THE SAME THING, I KNOW!
+But vim can do so much more, and I'll show you what vim is capable of.\\
+
+In vim, there are things called matches, submatches, and patterns.
+\begin{description}
+\item[Matches] are the words/characters that you actually want work with/edit
+\item[Submatches] are the words you have selected for within your search pattern that you want to use later on
+\item[Patterns] are anything you are searching for
+\end{description}
+
+Matches can be specified with \verb|\zs[match]\ze|, and submatches with \verb|\(\)|.
+For example, if you searched \verb!/submatches!, both the pattern and the match will be ``submatches'', but if you search for \verb!/\zssub\zematches!, then your pattern will still be ``submatches'', but your match will be ``sub''.\\
+
+Now, say for example you had a sentence like this:
+\begin{quote}
+
+
+
+
+I like this subsection in this book that was written in a submarine about substitution, matches, and submatches.
+
+
+
+
+\end{quote}
+and you wanted to remove the `sub' from the subsection, and nothing else.
+You can search for the `sub' and substitute the `sub' in the `subsection', using the substitution command as above, and check it for every occurrence.
+Or you can pattern search for `subsection', but only match the `sub', and then delete that match by typing \verb!:s/\zssub\zesection//g!.
+
+Now, lets talk about submatches.
+As an example, lets use the first sentence of this SYSKA:
+\begin{quote}
+
+
+
+
+Vim is a text editor that focuses on efficiency and speed (kind of).
+
+
+
+
+\end{quote}
+You want to italicise the words `efficiency' and `speed'.
+This document is written in \LaTeX{}, so you'll have to put the words inside the \verb!\textit{}! command.
+Submatches are handy in this sort of situation.
+You can start up a normal substitute, but encapsulate your query with braces like this: \verb!:s/\(efficiency\)/\\textit{\1}/g!.
+The \verb!\1! tells vim to use the first submatch you have specified in your search.
+You can repeat this for speed, or if you want to do this in one hit, type \verb!:s/\(efficiency\|speed\)/\\textit{\1}/g!.\\
+
+So, my question is: Can you do this in MS word?
+
+\section{Vim plugins}
+
+The last section was only a brief touch on vim's default functionality.
+Yea, DEFAULT functionality.
+Now I'm going to show you some of the plugins I have found that I thought was pretty cool.
+
+\subsection{unite.vim}
+
+This plugin lets you make a separate window for a specific purpose (usually file listing and searching) that the user can define.
+The great thing about this plugin is that, if you know what you're doing, you can make your own interface.\\
+
+	\begin{quote}
+	show buffer, colorscheme, references, overview, etc.
+	\end{quote}
+
+\subsection{neosnippet.vim}
+
+Now, this plugin is useful, especially in coding environment.
+This plugin has set of predefined ``snippets'' that you can use to prepopulate the document with the relevant argument(s).
+These are language specific, and have different snippets for different filetypes.
+%Example (slide, center):
+
+	\begin{quote}
+	This is a typical beamer slide and I want this text to be centered.
+	\end{quote}
+
+\subsection{Easy align and tabular}
+
+These are two separate plugins that do similar things --  align text by certain characters.
+
+\begin{tabular}{l|c|c}
+This & is & an\\
+example & of & the\\
+easy & align & plugin\\
+\end{tabular}
+
+\end{document}
