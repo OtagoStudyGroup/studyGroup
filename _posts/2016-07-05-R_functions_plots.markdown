@@ -1,6 +1,6 @@
 ---
 title: R functions and plots
-text: Creating functions and into to plotting in R
+text: Creating functions and intro to plotting in R
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/OtagoStudyGroup/studyGroup/issues/40
 date: 2016-07-05
