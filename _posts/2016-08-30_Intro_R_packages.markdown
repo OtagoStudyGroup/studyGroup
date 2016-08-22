@@ -1,5 +1,5 @@
 ---
-title: R - Intro to making packages
+title: R Intro to making packages
 text: Intro lesson on turning functions into your own R packages
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/OtagoStudyGroup/studyGroup/issues/44
