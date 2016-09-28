@@ -653,7 +653,7 @@ Note that FEATHER is designed for data _already_ loaded into python or R.
 
 ### READ 
 **base R** | **data table** | **readr** | **bigmemory** | **feather**
---- | --- | --- | ---
+--- | --- | --- | --- | ---
 `read.csv`   | `fread`         | `read_csv` | `read.big.matrix` | `read_feather`
 52.203s | 8.154s | 11.120s | 28.647s | 2.414s
 
