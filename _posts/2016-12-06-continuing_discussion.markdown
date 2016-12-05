@@ -1,6 +1,6 @@
 ---
 title: "Continuing Discussion
-text: "We're continuing the discussion about the end of year"
+text: "Final end of year session"
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/OtagoStudyGroup/studyGroup/issues/51
 date: 2016-12-06
