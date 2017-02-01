@@ -1,11 +1,11 @@
 ---
-title: 5x5 Lightning SYSKA - March
+title: 5x5 Lightning SYSKA 
 text: 5 minute lightning talks on 5 different topics by 5 different presenters on stuff you should know about
 location: Rm 319 Dept of Biochemistry
-link: https://github.com/otagostudygroup/studyGroup/issues/8 
-date: 2016-03-03
-startTime: '15:30'
-endTime: '16:30'
+link: https://github.com/otagostudygroup/studyGroup/issues/52 
+date: 2017-02-14
+startTime: '11:00'
+endTime: '12:00'
 
 ---
 
