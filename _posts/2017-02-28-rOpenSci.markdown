@@ -1,0 +1,11 @@
+---
+title: rOpenSci
+text: Discussion and introduction to rOpenSci
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/53 
+date: 2017-02-28
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
