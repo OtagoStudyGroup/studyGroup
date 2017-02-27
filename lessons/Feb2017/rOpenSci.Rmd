@@ -10,6 +10,9 @@ output:
 
 playing with a few packages from the rOpenSci world
 
+https://ropensci.org/
+
+https://github.com/ropenscilabs/
 
 ## fulltext
 
@@ -94,6 +97,9 @@ paper %>% chunks(c("author","title"))
 
 a package for generating fake data
 
+url: https://github.com/ropenscilabs/charlatan
+
+
 ```{r}
 # needed to install libgmp-dev and libmpfr-dev (ubuntu)
 # devtools::install_github("ropenscilabs/charlatan")
@@ -158,6 +164,10 @@ pdf <- system.file('examples', 'data.pdf', package = 'tabulizer')
 out1 <- extract_tables(pdf)
 str(out1)
 ```
+View a table
+```{r}
+out1[[1]]
+```
 
 
 ```{r, warning=FALSE}
@@ -170,37 +180,134 @@ manual selection of table area
 ```{r, warning=FALSE, message=FALSE}
 #areas <- locate_areas(kot,pages = 3)
 
-manual_kot <- extract_tables(kot,, pages = 3, area = list(c(top = 120, left = 35.4, bottom = 433.68, right = 556.9)), method = 'data.frame' )
+manual_kot <- extract_tables(kot,, pages = 3, area = list(c(top = 120, left = 35.4, bottom = 433.68, right = 556.9)), method = 'data.frame' , encoding = 'UTF-8')
 head(manual_kot[[1]])
 tail(manual_kot[[1]])
 ```
 Clean up the table
 ```{r}
 selected_rows <- c(4:13,15:34)
+
 table1_tmp <- manual_kot[[1]]
+
+# pull out the full data rows
 table1_tmp <- table1_tmp[selected_rows,]
-table_header <- c("SNP","Chr","bp36","closest_gene","grail_gene","A1","A2","FreqA1","Effect", "SE","P")
+
+table_header <- c("SNP","Chr","bp36","closest_gene","grail_gene","A1","A2","FreqA1","Effect", "SE")
+
+
 tmp <- list()
 for(name in table_header){
- tmp[[name]] <- sapply(table1_tmp[,1], function(text) {strsplit(x = text,split = ' ' )[[1]][which(name == table_header)]})
+  # create a list entry for each column and split the string on spaces pulling out the
+  # entry that corresponds to the column - won't operate properly if more than 1 word per column
+ tmp[[name]] <- sapply(table1_tmp[,1], 
+                       function(text) {
+                         strsplit(x = text,split = ' ' )[[1]][which(name == table_header)]
+                         })
 }
+# the P column had multiple spaces so need to deal with separately
+tmp[["P"]] <- sapply(table1_tmp[,1], 
+                       function(text) {
+                         # remove the first 10 entries and make a single entry
+                         paste((strsplit(x = text , split = ' ')[[1]][-1:-10]), collapse = ' ')
+                         })
+
+# bind all the entries of the list as columns in a datafram
 table1 <- do.call(cbind, tmp)
+
 rownames(table1) <- 1:nrow(table1)
-table1 <-data.frame(table1, goutOR = manual_kot[[1]]$X[selected_rows], goutP =  manual_kot[[1]]$X.1[selected_rows])
+
+# add on the 2 columns that were extracted fine
+table1 <-data.frame(table1, 
+                    goutOR = manual_kot[[1]]$X[selected_rows], 
+                    goutP =  manual_kot[[1]]$X.1[selected_rows]
+                    , stringsAsFactors = FALSE)
 
 ```
 
 see how it's going
 ```{r}
 head(table1)
+str(table1)
 ```
 
 Not bad, all that's left is to clean up some of the columns so that they become numbers in R
 
 
-Seems to work fine for the example pdf however in real life applications of fancier tables it struggles.
+```{r}
+# find and replace all of the 'x 10-' with 'e' so that R can turn that to a numeric
+# the x and - are not standard symbols so had to pull them out from a cell
+x <- substr(table1$P[1], 5,5)
+dash <- substring(table1$P[1], 9,9)
+# replace all x and - with the proper character
+table1 <- data.frame(
+  apply(table1, 2, function(text) {
+    gsub(x = text, pattern = x, replacement = 'x')})
+  )
+
+table1 <- data.frame(
+  apply(table1, 2, function(text) {
+    gsub(x = text, pattern = dash, replacement = '-')
+    }), 
+  stringsAsFactors = FALSE)
+
+pat <- ' x 10-'
+
+# replace the x 10- with e-
+table1$goutP <- as.numeric(
+  unlist(
+    sapply(table1$goutP, 
+           function(text){
+             gsub(x = text, pattern = pat, replacement = 'e')
+             })
+    )
+  )
+
+
+# special replacement
+table1$P[3] <- 0
+table1$P <- as.numeric(
+  unlist(
+    sapply(table1$P, 
+           function(text){
+             gsub(x = text, pattern = pat, replacement = 'e-')
+             })
+    )
+  )
+
+
+```
+
+remove the 'a' from the end of the SNP names
+```{r}
+table1$SNP <- unlist(
+  sapply(table1$SNP, function(text){
+    strsplit(x = text, split = 'a' )[[1]][1]
+  })
+)
+```
+
+
+convert the columns that are supposed to be to numeric
+```{r}
+table1[,colnames(table1) %in% c("bp36","FreqA1", "Effect","SE","P","goutOR","goutP")] <- apply(table1[,colnames(table1) %in% c("bp36","FreqA1", "Effect","SE","P","goutOR","goutP")], 2, as.numeric)
+
+```
+
+
+Look at the final product
+```{r}
+head(table1)
+str(table1)
+```
+
+
+
+Seems to work fine for the example pdf however in real life applications of fancier tables it struggles and needs a bit of work to make the table nicely in R.
 
 ## magick
+
+A package for manipulation of images
 
 url: https://github.com/ropensci/magick
 
