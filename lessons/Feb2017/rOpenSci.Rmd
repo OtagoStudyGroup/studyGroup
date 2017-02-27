@@ -1,0 +1,256 @@
+---
+title: "R - rOpenSci"
+output:
+  html_notebook: 
+    toc: true
+---
+
+
+
+
+playing with a few packages from the rOpenSci world
+
+
+## fulltext
+
+First up is a package called _fulltext_ which lets you search through several different journals for full text
+
+url: https://ropensci.org/tutorials/fulltext_tutorial.html
+
+
+From the website _fulltext_ can:
+
+- **Search** for articles
+- **Retrieve** full text
+- **Convert** formats
+- **Text** - get text from pdfs
+- **Extract** bits from articles
+
+```{r}
+#install.packages('fulltext')
+library(fulltext)
+```
+
+Now with the library installed and loaded we can start playing with a few of the examples provided
+
+
+```{r}
+(results1 <- ft_search(query = 'bioinformatics', from = 'plos'))
+```
+
+Default only returns 10 hits, and also looks like it only searches PLoS
+
+From my reading of the manual it looks like we can specify multiple sources to search like this
+```{r}
+(results1 <- ft_search(query = 'bioinformatics', from = c('plos','europmc')))
+```
+
+To search BMC journals you need to sign up for a API key - run '?fulltext::ft_search' for further details 
+
+What do we get returned?
+```{r}
+str(results1)
+```
+
+
+Each publisher/search engine has a slot in the list with metadata and data
+```{r}
+results1$plos
+```
+
+Using that search we can now the full text for the articles
+```{r}
+(text1 <- ft_get(results1$plos$data$id[1]))
+```
+
+
+Again what did we get?
+```{r}
+str(text1)
+```
+
+
+
+Lets see what is in the paper:
+```{r}
+text1 %>% chunks(c('doi','title','abstract'))
+```
+
+
+
+finding my paper (grabbed doi from google scholar search)
+```{r}
+doi <- "10.3389/fgene.2014.00293"
+(paper <- ft_get(doi, from = 'entrez'))
+```
+
+
+```{r}
+paper %>% chunks(c("author","title"))
+```
+
+
+## Charlatan
+
+a package for generating fake data
+
+```{r}
+# needed to install libgmp-dev and libmpfr-dev (ubuntu)
+# devtools::install_github("ropenscilabs/charlatan")
+library(charlatan)
+```
+
+```{r}
+ch_generate() %>% data.frame()
+```
+
+create a fraudster
+```{r}
+(x <- fraudster())
+```
+
+
+fake DOIs
+```{r}
+
+x$doi()
+```
+
+fake GPS co-ordinates
+```{r}
+c(x$lat(),x$lon())
+x$position()
+```
+
+fake credit card numbers
+```{r}
+x$credit_card_number()
+x$credit_card_provider()
+x$credit_card_security_code()
+```
+
+## Tabulizer
+
+A package to extract tables from PDFs!
+
+I had a huge problem installing rJava which is required by this package, in the end I solved it using "sudo apt-get install r-cran-rjava"
+
+```{r, eval = FALSE}
+if (!require("ghit")) {
+    install.packages("ghit")
+}
+# on 64-bit Windows
+#ghit::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"), INSTALL_opts = "--no-multiarch")
+# elsewhere
+ghit::install_github(c("ropensci/tabulizerjars", "ropensci/tabulizer"))
+```
+
+
+```{r}
+library(tabulizer)
+```
+
+url: https://github.com/ropensci/tabulizer
+
+load in the pdf
+```{r}
+pdf <- system.file('examples', 'data.pdf', package = 'tabulizer')
+out1 <- extract_tables(pdf)
+str(out1)
+```
+
+
+```{r, warning=FALSE}
+kot <- '~/kottgen2013.pdf'
+out2 <- extract_tables(kot, pages = 3, method = 'data.frame')
+str(out2)
+```
+
+manual selection of table area
+```{r, warning=FALSE, message=FALSE}
+#areas <- locate_areas(kot,pages = 3)
+
+manual_kot <- extract_tables(kot,, pages = 3, area = list(c(top = 120, left = 35.4, bottom = 433.68, right = 556.9)), method = 'data.frame' )
+head(manual_kot[[1]])
+tail(manual_kot[[1]])
+```
+Clean up the table
+```{r}
+selected_rows <- c(4:13,15:34)
+table1_tmp <- manual_kot[[1]]
+table1_tmp <- table1_tmp[selected_rows,]
+table_header <- c("SNP","Chr","bp36","closest_gene","grail_gene","A1","A2","FreqA1","Effect", "SE","P")
+tmp <- list()
+for(name in table_header){
+ tmp[[name]] <- sapply(table1_tmp[,1], function(text) {strsplit(x = text,split = ' ' )[[1]][which(name == table_header)]})
+}
+table1 <- do.call(cbind, tmp)
+rownames(table1) <- 1:nrow(table1)
+table1 <-data.frame(table1, goutOR = manual_kot[[1]]$X[selected_rows], goutP =  manual_kot[[1]]$X.1[selected_rows])
+
+```
+
+see how it's going
+```{r}
+head(table1)
+```
+
+Not bad, all that's left is to clean up some of the columns so that they become numbers in R
+
+
+Seems to work fine for the example pdf however in real life applications of fancier tables it struggles.
+
+## magick
+
+url: https://github.com/ropensci/magick
+
+
+original image
+![frink_orig](frink.png)
+
+```{r}
+# requires the imagemagick Magick++ library to be installed
+#install.packages('magick')
+library(magick)
+library(magrittr)
+frink <- image_read("https://jeroenooms.github.io/images/frink.png")
+image_trim(frink)
+image_scale(frink, "200x200")
+image_flip(frink)
+image_rotate(frink, 45) ## <-- result of this is shown
+image_negate(frink)
+frink %>% 
+  image_background("green") %>% 
+  image_flatten() %>%
+  image_border("red", "10x10")
+```
+
+
+```{r}
+image_rotate(frink, 45) %>% image_write("frink-rotated.png")
+```
+
+![frink_rotated](frink-rotated.png)
+```{r}
+image_charcoal(frink) %>% image_write("frink-charcoal.png")
+```
+
+![frink_char](frink-charcoal.png)
+
+Gifs
+```{r}
+# Download images
+oldlogo <- image_read("https://developer.r-project.org/Logo/Rlogo-2.png")
+newlogo <- image_read("https://www.r-project.org/logo/Rlogo.png")
+logos <- c(oldlogo, newlogo)
+logos <- image_scale(logos, "400x400")
+
+# Create GIF
+
+# Morph effect  <-- result of this is shown
+(animation2 <- image_animate(image_morph(logos, frames = 20)))
+image_write(animation2, "anim2.gif")
+```
+
+
+![gif2](anim2.gif)
