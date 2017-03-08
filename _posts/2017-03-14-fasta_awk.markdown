@@ -1,0 +1,11 @@
+---
+title: Intro to FASTA manipulation and AWK 
+text: Elizabeth and Matt will be presenting on manipulation of FASTA files and general files using AWK
+location: Rm 312 Hercus Building (cnr Hanover and Gt King St)
+link: https://github.com/otagostudygroup/studyGroup/issues/55 
+date: 2017-03-14
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
