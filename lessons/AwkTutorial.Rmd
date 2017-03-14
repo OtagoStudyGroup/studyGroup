@@ -1,0 +1,103 @@
+---
+title: "Awk Tutorial"
+author: "Matt Bixley"
+date: "14 March 2017"
+output: ioslides_presentation
+---
+
+## Awk Tutorial
+
+ <https://www.tutorialspoint.com/awk/index.htm>.
+
+I cheated and just found a tutorial online.
+
+## What is Awk?
+
+- It is an excellent filter and report writer.
+    * I have no idea how you'd write a report!!!!!
+      
+- AWK is an excellent tool for processing rows and columns.
+    * `awk '{print $3 "\t" $4}' marks.txt`
+    
+- AWK also has string manipulation functions.
+    * `awk '/a/ {print $0}' marks.txt`
+    
+- Versions
+    * Awk, MAWK, GAWK, JAWK, NAWK
+
+## Some Awk Basics
+  - Workflow
+  <https://www.tutorialspoint.com/awk/awk_workflow.htm>
+   
+- `awk [options] file ...`
+
+    * Examples
+  
+    * `awk '{print $3 "\t" $4}' marks.txt`
+
+    * `awk 'BEGIN{printf "Sr No\tName\tSub\tMarks\n"} 
+      {print}' marks.txt`
+
+
+## Awk and Bash for real
+- count the files in the results directory
+
+`find ./ -maxdepth 1 -name MAN\* | sort > files.txt`
+
+`touch tally.txt`
+
+`while read i`
+
+  `do`
+    `ls $i | wc >> tally.txt`
+    
+  `done < files.txt`
+  
+`paste files.txt tally.txt | awk '{print $1,$2}'`
+
+`awk '{s+=$1}END{print s " Completed" }' tally.txt`
+`awk '{s+=$1}END{print (s*100)/250 "% Done" }' tally.txt`
+
+
+
+## Awk and Bash for real
+- Murrays Version
+
+`i=0; for f in $(find . -maxdepth 1 -name MAN\* | sort -n);do i=$(echo "$i + $(ls $f | wc -l)" | bc); echo $f $(ls $f | wc -l) ; done ; echo $i ; echo $i / 250.0 | bc -l`
+
+
+- ?????? I don't really understand that either
+- Nor does it work on my laptop
+  * minus 1 for Murray
+
+## On a SNP File
+
+- Print the file with a header
+`awk 'BEGIN{printf "ID\tGender\tSNP1\tSNP2\n"} {print}' snps.txt`
+
+- Find all females    
+`awk '/f/ {print $0}' snps.txt`
+
+- Find all heterozygotes
+`awk '/ab/ {print $0}' snps.txt`
+
+- Find all samples with a missing allele in Snp3
+`awk '$5 ~ /-/ { print $1 }' snps.txt` 
+
+## code chunks
+
+- would have been cool, alas, I failed.
+- minus 1 for Matt
+
+`{r, engine = 'bash'}`  
+`awk '$4 == "-" { print $0 }' snps.txt'  
+
+***bash* is not recognized as an internal or external command,
+operable program or batch file.**
+
+
+- **TIP FOR FOOLS**
+
+`rm *.txt`  <- never do that, it's a bad thing  
+
+`rm tally.txt files.txt`
