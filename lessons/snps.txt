@@ -1,0 +1,5 @@
+p1	f	aa	ab	aa
+p2	m	ab	bb	a-
+p3	m	aa	ab	bb
+p4	f	ab	ab	ab
+p5	f	aa	ab	aa
