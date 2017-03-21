@@ -1,0 +1,11 @@
+---
+title: Shiny apps in R 
+text: Ruth will be taking us through some of the things she has discovered while making a shiny app
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/57 
+date: 2017-03-28
+startTime: '11:00'
+endTime: '12:00'
+
+---
+

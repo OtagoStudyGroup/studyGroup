@@ -1,0 +1,211 @@
+####### N of reads #################################################################
+nzcat my.fastq.gz | echo $((`wc -l`/4))
+
+############ count the number of sequences in a file ###############################
+grep -c "^>" file.fa
+
+###########To convert FASTQ to FASTA format ########################################
+awk 'NR%4==1{print ">"substr($0,2)}NR%4==2{print $0}' file.fq
+#print first and second line of every four lines. Replace the first character of the first line with ">".
+
+
+######## edit fasta header #########################################################
+
+awk '/^>/{print ">chromosome" ++i; next}{print}' < fasta.fna
+
+
+########## add something to the headers ############################################
+sed 's/>.*/&WHATEVERYOUWANT/' fasta.fna > outfile.fa
+
+
+
+####### clean up the file so only the first col of the header remains ##############
+awk '{print $1}' fasta.fna > output.fa
+
+
+
+############### To find sequences with matching name ##############################
+
+cat fasta.fna| grep -A1 "header1"
+cat fasta.fna | grep -A1 ">header1"
+
+
+grep -o -E "^>\w+" fasta.fna | tr -d ">" #   -d      Delete characters in string1 from the input.
+
+-E, --extended-regexp
+             Interpret pattern as an extended regular expression (i.e. force grep to behave as egrep).
+             grep -E '^no(fork|group)' /etc/group
+...to return lines that start with either "nofork" or "nogroup". Without the -E switch you would have to escape the special
+characters involved because with normal pattern matching they would just search for that exact pattern;
+grep '^no\(fork\|group\)' /etc/group
+             \w white space +
+     -o, --only-matching
+             Prints only the matching part of the lines.
+
+
+awk 'BEGIN{RS=">";FS="\n"}NR>1{if ($1~/header1/) print ">"$0}' fasta.fna
+
+
+RS     input record separator (default newline)
+FS     regular expression used to separate fields; also settable by option -Ffs.
+NR     ordinal number of the current record (line in file)
+
+# man awk
+# man grep
+
+
+#### To extract sequences using a list #############################################
+
+cat fasta.fna| grep -A1 -Fwf list
+
+awk 'BEGIN{RS=">";FS="\n"}NR==FNR{a[$1]++}NR>FNR{if ($1 in a && $0!="") printf ">%s",$0}' list fasta.fna
+#The names in the list must start with ">" and each name is separated by a newline ("\n")
+# do same thing with grep -Fwf list fasta.fna
+
+
+
+
+##### linearize fasta ##############################################################
+cat fasta.wrapped.fa | sed 's/>.*/&_/' | tr -d '\n' | sed 's/>/_>/g' | tr '_' '\n' | tail -n +2
+
+# difference between sed 's/symbol_to_replace/symbol_you_need/g' and tr '\t' '\n'
+
+sed -e 's/\(^>.*$\)/#\1#/' fasta.wrapped.fa | tr -d "\r" | tr -d "\n" | sed -e 's/$/#/' | tr "#" "\n" | sed -e '/^$/d' #! test this
+
+
+/#\1# - put the first match in hash symbols
+-e - (works without it)
+tr -d "\r"  -d      Delete characters in string1 from the input.
+
+sed -e 's/$/#/' add '#' at the end of the seq line
+
+sed -e '/^$/d' removes extra new lines
+(Canopy 32bit) biocelizabethperminadisplay:reverse elizabethpermina$ sed -e 's/\(^>.*$\)/#\1#/' fasta.wrapped.fa | tr -d "\r" | tr -d "\n" | sed -e 's/$/#/'     
+(Canopy 32bit) biocelizabethperminadisplay:reverse elizabethpermina$ sed -e 's/\(^>.*$\)/#\1#/' fasta.wrapped.fa | tr -d "\r" | tr -d "\n" #| sed -e 's/$/#/' 
+#>fasta_header1#ACACACACACACACACACACACACACACACGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTACACACACACACACACACACACACACCACAGTGTGTGTGTGTGTGTGTGTGTGTGTGTGT#
+#>fasta_header1#ACACACACACACACACACACACACACACACGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTACACACACACACACACACACACACACCACAGTGTGTGTGTGTGTGTGTGTGTGTGTGTGT(Canopy 32bit) 
+
+
+awk 'BEGIN{RS=">";FS="\n"}NR>1{seq="";for (i=2;i<=NF;i++) seq=seq""$i; print ">"$1"\n"seq}' fasta.wrapped.fa
+
+#Single line sequence is desirable when a sequence is long and spans many lines. Furthermore, single line sequence is much easier to be manipulated using AWK oneliners as showed in the next few examples.
+
+
+while read line;do if [ "${line:0:1}" == ">" ]; then echo -e "\n"$line; else echo $line | tr -d '\n' ; fi; done < input.fasta > output.fasta
+
+Once linearized, say you want pick the sequence for the id 'Q15049' you can use
+
+grep -A1 'header2' output.fasta
+
+ once again, linearize
+awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' fasta.wrapped.fa > sample1_singleline.fa
+
+####### linearize, grep "*" (stop codon) ##########################################
+
+ awk '/^>/{printf("\n%s\t",$0);next;} {printf("%s",$0);} END {printf("\n");}' fasta.wrapped.fa | awk -F '\t' '!($2 ~ /\*/)' | tr "\t" "\n"
+ 
+#########Convert from a two column text tab-delimited file (ID and sequence) to a fasta file 
+cat tab.delim.seq | tr '\t' '\n'
+awk -vOFS='' '{print ">",$1,"\n",$2,"\n";}' tab.delim.seq > sample1.fa
+
+       OFS    output field separator (default blank)
+       # check -v OFS=''
+
+
+######################################################################################################################
+
+1. To print specified sequence region
+#To print the sequence starting from position 1 until 2213
+awk 'BEGIN{RS=">";FS="\n"}NR>1{seq="";for (i=2;i<=NF;i++) seq=seq""$i; print ">"$1"\n"substr(seq,1,2213)}' fasta.fna
+
+#To print sequence starting from position 399 until 704
+awk 'BEGIN{RS=">";FS="\n"}NR>1{seq="";for (i=2;i<=NF;i++) seq=seq""$i; print ">"$1"\n"substr(seq,399,704-399+1)}' fasta.fna
+
+#To print sequence with matching name from position 399 until 704
+awk 'BEGIN{RS=">";FS="\n"}NR>1{seq="";for (i=2;i<=NF;i++) seq=seq""$i; if ($1~/name/) print ">"$1"\n"substr(seq,399,704-399+1)}' fasta.fna
+#Useful to print sequence region when given start position and stop position or length
+
+2. To substitute nucleotide sequences
+#To substitute small letter with capital letter
+awk 'BEGIN{RS=">";FS="\n"}NR>1{printf ">%s\n",$1;for (i=2;i<=NF;i++) {gsub(/c/,"C",$i);gsub(/a/,"A",$i);gsub(/g/,"G",$i);gsub(/t/,"T",$i); printf "%s\n",$i}}' fasta.fna
+
+
+########################################################################################################################
+
+http://molbiol-tools.ca/
+
+3. To convert DNA to RNA # 
+awk 'BEGIN{RS=">";FS="\n"}NR>1{printf ">%s\n",$1;for (i=2;i<=NF;i++) {gsub(/T/,"U",$i); printf "%s\n",$i}}' fasta.fna
+
+4. awk 'BEGIN{RS=">";FS="\n";print "name\tA\tC\tG\tT\tN\tlength\tGC%"}NR>1{sumA=0;sumT=0;sumC=0;sumG=0;sumN=0;seq="";for (i=2;i<=NF;i++) seq=seq""$i; k=length(seq); for (i=1;i<=k;i++) {if (substr(seq,i,1)=="T") sumT+=1; else if (substr(seq,i,1)=="A") sumA+=1; else if (substr(seq,i,1)=="G") sumG+=1; else if (substr(seq,i,1)=="C") sumC+=1; else if (substr(seq,i,1)=="N") sumN+=1}; print $1"\t"sumA"\t"sumC"\t"sumG"\t"sumT"\t"sumN"\t"k"\t"(sumC+sumG)/k*100}' file.fa
+#Calculate number of each nucleotide, total length and GC content
+
+5. reverse compliment # add links
+
+awk 'BEGIN{RS=">";FS="\n";a["T"]="A";a["A"]="T";a["C"]="G";a["G"]="C";a["N"]="N"}NR>1{for (i=2;i<=NF;i++) seq=seq""$i;for(i=length(seq);i!=0;i--) {k=substr(seq,i,1);x=x a[k]}; printf ">%s\n%s",$1,x}' file.fa
+#This will produce a single line sequence
+
+
+######################################################################################################################
+
+
+
+awk '/^>/{printf("\n%s\t",$0);next;} {printf("%s",$0);} END {printf("\n");}' file.fa # make tab-delim file out of fasta
+
+/^>/{printf("\n%s\t",$0);next;}
+
+{printf("%s",$0);}
+
+END {printf("\n");}
+
+cat file.fasta | awk '/^>/{printf("\n%s\t",$0);}
+
+20 linearize (remove wrapping)
+< inputfile awk 'NR==1 {print;next} !/>/ {x=x$0;next} />/ {print x"\n"$0;x="";next} END {print x}' > outputfile
+
+NR==1 {
+    print;
+    next
+}
+!/>/ {
+    x=x$0;
+    next
+}
+/>/ {
+    print x"\n"$0;
+    x="";
+    next
+}
+END {
+    print x
+}
+
+The first block is executed only if the currently processed record number is 1: it prints the currently processed record and skips to the next record;
+The second block is executed only if the > regular expression doesn't match the currently processed record: it concatenates the content of the currently processed record to the variable x and skips to the next record;
+The third block is executed only if the > regular expression matches the currently processed record: it prints the content of the x variable immediately followed by a newline character immediately followed by the content of the currently processed record and skips to the next record;
+The fourth block is executed only if there are no more records to process: it prints the content of the x variable;
+
+
+
+
+(Canopy 32bit) biocelizabethperminadisplay:reverse elizabethpermina$ sed -e 's/\(^>.*$\)/#\1#/' file.fasta | tr -d "\r" | tr -d "\n" #| sed -e 's/$/#/' 
+#>fasta_header1#ACACACACACACACACACACACACACACACGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTACACACACACACACACACACACACACCACAGTGTGTGTGTGTGTGTGTGTGTGTGTGTGT#
+#>fasta_header1#ACACACACACACACACACACACACACACACGTGTGTGTGTGTGTGTGTGTGTGTGTGTGTACACACACACACACACACACACACACCACAGTGTGTGTGTGTGTGTGTGTGTGTGTGTGT(Canopy 32bit) biocelizabethperminadisplay:reverse elizabethpermina$
+###############################################################################################################################################################################################################
+
+
+
+#####################################################################################
+
+###################################################################################
+
+####################################################################################
+
+
+
+
+
+
+
+
+
