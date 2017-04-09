@@ -1,0 +1,11 @@
+---
+title: Introduction to LaTeX 
+text: Riku will give and introduction to using LaTex to create documents - namely thesis
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/58 
+date: 2017-04-11
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
