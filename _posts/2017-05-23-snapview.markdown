@@ -1,0 +1,11 @@
+---
+title: SnapView
+text: Cushla is going to introduce SnapView 
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/60
+date: 2017-05-23
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
