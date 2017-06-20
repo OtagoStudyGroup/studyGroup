@@ -13,9 +13,12 @@ output: html_notebook
 library(tidyverse)
 ```
 
-#Summarising Data
+# Summarising Data
 
 ## skimr
+
+https://github.com/ropenscilabs/skimr
+
 ```{r}
 # install.packages("devtools")
 # devtools::install_github("hadley/colformat")
@@ -67,6 +70,8 @@ skim_v(iris$Sepal.Length)
 
 ## Visdat
 
+https://github.com/njtierney/visdat
+
 Visdat is a package developed to allow you to visually check that R has loaded your data as you expected and to also get a sense of how complete your data is
 
 ```{r}
@@ -104,6 +109,8 @@ vis_miss(airquality,cluster = TRUE)
 ```
 
 ## Narnia
+
+https://github.com/njtierney/narnia
 
 Narnia is a package developed to enable the plotting of missing data
 
