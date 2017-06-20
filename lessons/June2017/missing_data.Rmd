@@ -1,0 +1,207 @@
+---
+title: "Missing Data"
+author: "Murray Cadzow"
+output: html_notebook
+---
+
+```{r}
+# install.packages("devtools")
+
+# the development version from GitHub
+
+# devtools::install_github("hadley/tidyverse")
+library(tidyverse)
+```
+
+#Summarising Data
+
+## skimr
+```{r}
+# install.packages("devtools")
+# devtools::install_github("hadley/colformat")
+# devtools::install_github("ropenscilabs/skimr")
+library(skimr)
+```
+
+
+load some data sets
+```{r}
+data("iris")
+data("airquality")
+```
+
+The skim() function prints out a summary of your data. The summary varies based on the data type.
+
+```{r}
+skim(iris)
+```
+
+The summary is very similar to the summary() function but also includes information about the total number, number missing and number of complete entries.
+
+Produces separate output for the different data types
+
+And can also produce a long format
+```{r}
+skim(iris) %>% View()
+```
+
+You can filter the long format to pull out a particular statistic
+```{r}
+skim(iris) %>% filter(stat == 'hist')
+```
+
+
+```{r}
+skim(airquality)
+```
+
+To get a summary of a single variable use skim_v()
+```{r}
+skim_v(iris$Sepal.Length)
+```
+
+
+
+
+# Missing Data
+
+## Visdat
+
+Visdat is a package developed to allow you to visually check that R has loaded your data as you expected and to also get a sense of how complete your data is
+
+```{r}
+# devtools::install_github("njtierney/visdat")
+library(visdat)
+```
+
+```{r}
+vis_dat(iris)
+```
+
+
+```{r}
+vis_dat(typical_data)
+```
+
+The default behaviour is to group similar datatypes
+
+making sort_type = FALSE means that the data frame columns are returned in the original order
+
+```{r}
+vis_dat(typical_data, sort_type = FALSE)
+```
+
+vis_miss() can be used to visualise the the completeness of the data
+
+```{r}
+vis_miss(airquality)
+```
+
+And you can also use it to get a sense of the scale of the problem
+
+```{r}
+vis_miss(airquality,cluster = TRUE)
+```
+
+## Narnia
+
+Narnia is a package developed to enable the plotting of missing data
+
+By default ggplot2 doesn't allow the plotting of NAs and will automatically filter them out
+
+```{r}
+ggplot(data = airquality,
+       aes(x = Ozone,
+           y = Solar.R)) +
+  geom_point()
+```
+
+Narnia adds new geoms to ggplot that enable the plotting of NA data.
+
+The geom_missing_point will take your missing data and assign it a value that is outside of 
+
+```{r}
+#devtools::install_github("njtierney/narnia")
+library(narnia)
+
+ggplot(data = airquality,
+       aes(x = Ozone,
+           y = Solar.R)) +
+  geom_missing_point()
+```
+
+in the background it uses the shadow_shift() function
+
+```{r}
+airquality %>% mutate(Ozone_shift = shadow_shift(Ozone))
+```
+
+
+Shadow matrix
+```{r}
+as_shadow(airquality)
+```
+
+
+
+```{r}
+aq_shadow <- bind_shadow(airquality)
+
+aq_shadow
+```
+
+
+
+```{r}
+p1 <- ggplot(data = aq_shadow,
+       aes(x = Temp)) + 
+  geom_histogram() + 
+  facet_wrap(~Ozone_NA,
+             ncol = 1)
+
+p2 <- ggplot(data = aq_shadow,
+       aes(x = Temp,
+           colour = Ozone_NA)) + 
+  geom_density() 
+
+gridExtra::grid.arrange(p1, p2, ncol = 2)
+```
+
+Offers numerical summaries too
+
+```{r}
+# Proportion of variables that contain any missing values
+miss_var_pct(airquality)
+
+ # Proportion of cases that contain any missing values
+miss_case_pct(airquality)
+
+# Proportion elements in dataset that contains missing values
+miss_df_pct(airquality)
+
+```
+
+You can also get the number and percent missing on a column (var) and row (case) basis with miss_var_summary() and miss_case_summary()
+```{r}
+miss_var_summary(airquality)
+miss_case_summary(airquality)
+```
+
+plotting missing NA summaries
+
+```{r}
+gg_missing_var(airquality)
+```
+
+```{r}
+gg_missing_case(airquality)
+```
+
+Visually identify any column that contains missing values
+
+grey = missing
+
+```{r}
+gg_missing_which(airquality)
+```
+
