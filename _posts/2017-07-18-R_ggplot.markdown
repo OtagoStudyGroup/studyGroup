@@ -1,0 +1,11 @@
+---
+title: R ggplot 
+text: some ggplot tricks from Matt 
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/64
+date: 2017-07-18
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
