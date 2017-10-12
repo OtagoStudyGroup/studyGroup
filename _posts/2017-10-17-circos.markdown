@@ -1,0 +1,11 @@
+---
+title: Circos plots 
+text: Denise is going to run a session on creating visualisations with Circos
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/68
+date: 2017-10-17
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
