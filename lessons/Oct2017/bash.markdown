@@ -10,9 +10,9 @@ tr ',' '\t' < file
 tr '\t' ',' < file
 ```
 
-convert plink gwas output to single tab delimited
+convert plink gwas output to single tab delimited and only have the header and additive effects
 ```
-tr -s ' ' < gwas.assoc | sed 's/^ //g' | tr ' ' '\t' > gwas.assoc.tsv
+tr -s ' ' < gwas.assoc.logistic | sed 's/^ //g' | sed 's/ $//g' | grep 'CHR\|ADD' | tr ' ' '\t' > gwas.assoc.logistic.tsv
 ```
 
 number lines in a file
@@ -48,6 +48,17 @@ cat file | cut -f1-10
 remove header from a VCF
 ```
 grep -v '^#' file.vcf
+```
+
+
+be able to view non-printing characters
+```
+od -c file
+```
+
+super example of subsetting 1000 Genomes vcf using a panel file
+```
+bcftools view -s $(grep "CEU" integrated_call_samples_v3.20130502.ALL.panel | cut -f1 | tr '\n' ',') --force-samples -r 22:20000000-22000000 ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz | bgzip -c:wq > CEU_22_20000000-22000000.vcf.gz
 ```
 
 
