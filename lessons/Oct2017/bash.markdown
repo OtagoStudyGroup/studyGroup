@@ -1,5 +1,10 @@
 # command line oneliners
 
+note: to save the result of any bash command to a file add
+
+> new_file
+
+to the end of your command
 
 convert csv to tab and vice versa
 ```
