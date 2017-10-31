@@ -1,11 +1,5 @@
 # command line oneliners
 
-note: to save the result of any bash command to a file add
-
-> new_file
-
-to the end of your command
-
 convert csv to tab and vice versa
 ```
 # comma -> tab
@@ -13,6 +7,12 @@ tr ',' '\t' < file
 
 # tab -> comma
 tr '\t' ',' < file
+```
+
+note: to save the result of any bash command to a file add > new_file to the end of your command
+```
+# save output
+tr ',' '\t' < file > new_file
 ```
 
 convert plink gwas output to single tab delimited and only have the header and additive effects
