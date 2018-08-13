@@ -1,6 +1,6 @@
 ---
 title: R for data science intro 
-text: Working through the first three chapters of http://r4ds.had.co.nz/index.html 
+text: 'Working through the first three chapters of http://r4ds.had.co.nz/index.html'
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/otagostudygroup/studyGroup/issues/83
 date: 2018-08-16
