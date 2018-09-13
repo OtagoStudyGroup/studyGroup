@@ -1,5 +1,5 @@
 ---
-title: R for data science chap 3 continued (repeated) 
+title: R for data science chap 4 and start of chapter  5 
 text: 'Working through chapter 4 on workflow basics (http://r4ds.had.co.nz/workflow-basics.html) and start of chapter 5 on data transformation (http://r4ds.had.co.nz/transform.html)'
 location: Rm 319 Dept of Biochemistry
 link: https://github.com/otagostudygroup/studyGroup/issues/85
