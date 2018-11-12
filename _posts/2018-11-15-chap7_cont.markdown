@@ -1,0 +1,11 @@
+---
+title: R for data science chapter 7 continued
+text: 'Continuing on with  chapter 7 on exploratory data analysis (http://r4ds.had.co.nz/exploratory-data-analysis.html) picking up from 7.5.2 - Two categorical variables'
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/92
+date: 2018-11-15
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
