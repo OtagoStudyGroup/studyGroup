@@ -1,0 +1,11 @@
+---
+title: 'R for data science: Projects and Wrangling - chapters 8 and 9, and maybe 10'
+text: 'Rstudio projects (https://r4ds.had.co.nz/workflow-projects.html) and starting on wrangling (https://r4ds.had.co.nz/wrangle-intro.html) and maybe getting to tibbles (https://r4ds.had.co.nz/tibbles.html)'
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/92
+date: 2018-11-29
+startTime: '11:00'
+endTime: '12:00'
+
+---
+
