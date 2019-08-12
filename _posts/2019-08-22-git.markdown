@@ -2,7 +2,7 @@
 title: 'Practicing version control with Git (2)'
 text: 'This session will be 2 hours in length and provide an opportunity to practice collaborating using Git. Bring a laptop'
 location: Rm 319 Dept of Biochemistry
-link: https://github.com/otagostudygroup/studyGroup/issues/93
+link: https://github.com/otagostudygroup/studyGroup/issues/94
 date: 2019-08-22
 startTime: '13:00'
 endTime: '15:00'
