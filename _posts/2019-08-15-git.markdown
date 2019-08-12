@@ -1,0 +1,11 @@
+---
+title: 'Practicing version control with Git'
+text: 'This session (and next) will be 2 hours in length and provide an opportunity to setup and configure git, cover how/when to use version control and give you an opporunity to further develop your Git skills. Bring a laptop'
+location: Rm 319 Dept of Biochemistry
+link: https://github.com/otagostudygroup/studyGroup/issues/93
+date: 2019-08-15
+startTime: '13:00'
+endTime: '15:00'
+
+---
+
